@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS room(
     faculty_id CHAR(2) NOT NULL,
     room_type VARCHAR(20),
     seat_capacity INTEGER(4),
-    CONSTRAINT room_pk PRIMARY KEY (room_no,building_id,faculty_id),
-	  CONSTRAINT building_fk1 FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_code),
-    CONSTRAINT building_fk2 FOREIGN KEY (building_id) REFERENCES building(building_id)
+    CONSTRAINT room_pk PRIMARY KEY (room_no, building_id, faculty_id),
+    CONSTRAINT room_fk FOREIGN KEY (building_id, faculty_id) REFERENCES building(building_id, faculty_id)
 );
