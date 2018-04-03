@@ -1,7 +1,9 @@
 CREATE TABLE IF NOT EXISTS student(
     student_id VARCHAR(11) NOT NULL,
-    name VARCHAR(50),
-    name_en VARCHAR(50),
+    fname_th VARCHAR(50),
+    fname_en VARCHAR(50),
+    lname_th VARCHAR(50),
+    lname_en VARCHAR(50),
     date_of_birth DATE,
     address VARCHAR(100),
     mobile_no VARCHAR(15),
