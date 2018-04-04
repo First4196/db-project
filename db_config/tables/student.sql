@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS student(
     gpax DOUBLE,
     credit_gain INTEGER(3),
     curriculum VARCHAR(5),
+    advisor VARCHAR(11),
     CONSTRAINT student_pk PRIMARY KEY (student_id),
-    CONSTRAINT stdent_fk FOREIGN KEY (curriculum) REFERENCES curriculum(curriculum_id)
+    CONSTRAINT stdent_fk1 FOREIGN KEY (curriculum) REFERENCES curriculum(curriculum_id),
+    CONSTRAINT stdent_fk2 FOREIGN KEY (advisor) REFERENCES professor(professor_id)
 );
