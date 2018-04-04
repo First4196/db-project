@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS student(
     entry_year INTEGER(4),
     graduated BOOLEAN,
     gpax DOUBLE,
-    credit INTEGER(3),
+    credit_gain INTEGER(3),
     CONSTRAINT student_pk PRIMARY KEY (student_id)
 );
