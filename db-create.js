@@ -4,7 +4,7 @@ const config = require('./config.js');
 const mysql = require('promise-mysql');
 const fs = require('fs');
 
-const tables = ["student.sql","professor.sql","course.sql","course_sem.sql","course_section.sql"];
+const tables = ["faculty.sql","account.sql","student.sql","professor.sql","course.sql","course_sem.sql","course_section.sql","building.sql","room.sql","exam.sql"];
 
 async function main() {
     console.log("Creating database ...");
