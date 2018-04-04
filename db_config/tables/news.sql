@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS news(
     title VARCHAR(20),
     detail TEXT,
     CONSTRAINT news_pk PRIMARY KEY (course_id,course_year,course_semester,course_section,publish_time),
-    CONSTRAINT news_fk FOREIGN KEY (course_id,course_year,course_semester,course_section) REFERENCES course_section(course_id,course_year,course_semester,course_section)
+    CONSTRAINT news_fk FOREIGN KEY (course_id,course_year,course_semester,course_section)
+    REFERENCES course_section(course_id,course_year,course_semester,course_section)
 );
