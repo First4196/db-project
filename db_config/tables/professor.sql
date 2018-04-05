@@ -7,5 +7,7 @@ CREATE TABLE IF NOT EXISTS professor(
     address VARCHAR(100),
     mobile_no VARCHAR(15),
     email VARCHAR(50),
-    CONSTRAINT professor_pk PRIMARY KEY (professor_id)
+    department INTEGER(4),
+    CONSTRAINT professor_pk PRIMARY KEY (professor_id),
+    CONSTRAINT professor_fk FOREIGN KEY (department) REFERENCES department(department_id)
 );
