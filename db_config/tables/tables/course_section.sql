@@ -7,6 +7,6 @@ CREATE TABLE IF NOT EXISTS course_section(
     student_count INTEGER(4),
     lecturer VARCHAR(11),
     CONSTRAINT course_section_pk PRIMARY KEY (course_id, course_year, course_semester, course_section),
-    CONSTRAINT course_section_fk1 FOREIGN KEY (course_id, course_year, course_semester) REFERENCES course_sem(course_id, course_year, course_semester)
+    CONSTRAINT course_section_fk1 FOREIGN KEY (course_id, course_year, course_semester) REFERENCES course_sem(course_id, course_year, course_semester),
     CONSTRAINT course_section_fk2 FOREIGN KEY (lecturer) REFERENCES professor(professor_id)
 );
