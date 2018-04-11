@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS curriculum(
-	  curriculum_id VARCHAR(5) NOT NULL,
+	curriculum_id VARCHAR(5) NOT NULL,
     name_en VARCHAR(50),
     name_th VARCHAR(50),
     start_year INTEGER(4),
