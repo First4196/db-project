@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS building(
-    building_id	VARCHAR(4) NOT NULL,
+    building_id	INTEGER(3) NOT NULL,
     name_en	VARCHAR(50),
     name_th	VARCHAR(50),
     name_abbrev VARCHAR(15),
