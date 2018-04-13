@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS course_sem(
     course_id VARCHAR(7) NOT NULL,
     course_year INTEGER(4) NOT NULL,
     course_semester INTEGER(1) NOT NULL,
-    leader VARCHAR(30),
+    leader VARCHAR(11),
     midterm_exam VARCHAR(50),
     final_exam VARCHAR(50),
     CONSTRAINT course_sem_pk PRIMARY KEY (course_id, course_year, course_semester),
