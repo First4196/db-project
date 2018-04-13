@@ -1,0 +1,60 @@
+department_id,name_en,name_th,faculty
+2004,Inter-Department of Environmental Science,สหสาขาวิชาวิทยาศาสตร์สิ่งแวดล้อม,20
+2009,Inter-Department of Environmental Management,สหสาขาวิชาการจัดการสิ่งแวดล้อม,20
+2010,Inter-Department of English as an International Language,สหสาขาวิชาภาษาอังกฤษเป็นภาษานานาชาติ,20
+2011,Inter-Department of Biomedical Sciences,สหสาขาวิชาชีวเวชศาสตร์,20
+2022,Inter-Department of Technopreneurship and Innovation Management,สหสาขาวิชาธุรกิจเทคโนโลยีและการจัดการนวัตกรรม,20
+2023,"Inter-Department of Environment,Development and Sustainability",สหสาขาวิชาสิ่งแวดล้อม การพัฒนาและความยั่งยืน,20
+2100,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,21
+2101,Department of Civil Engineering,ภาควิชาวิศวกรรมโยธา,21
+2102,Department of Electrical Engineering,ภาควิชาวิศวกรรมไฟฟ้า,21
+2103,Department of Mechanical Engineering,ภาควิชาวิศวกรรมเครื่องกล,21
+2105,Department of Chemical Engineering,ภาควิชาวิศวกรรมเคมี,21
+2106,Department of Mining and Petroleum Engineering,ภาควิชาวิศวกรรมเหมืองแร่และปิโตรเลียม,21
+2109,Department of Metallurgical Engineering,ภาควิชาวิศวกรรมโลหการ,21
+2110,Department of Computer Engineering,ภาควิชาวิศวกรรมคอมพิวเตอร์,21
+2201,Department of Thai,ภาควิชาภาษาไทย,22
+2207,Department of Philosophy,ภาควิชาปรัชญา,22
+2209,Department of Linguistics,ภาควิชาภาษาศาสตร์,22
+2300,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,23
+2301,Department of Mathematics and Computer Science,ภาควิชาคณิตศาสตร์และวิทยาการคอมพิวเตอร์,23
+2302,Department of Chemistry,ภาควิชาเคมี,23
+2303,Department of Biology,ภาควิชาชีววิทยา,23
+2305,Department of Botany,ภาควิชาพฤกษศาสตร์,23
+2308,Department of Environmental Science,ภาควิชาวิทยาศาสตร์สิ่งแวดล้อม,23
+2312,Department of Microbiology,ภาควิชาจุลชีววิทยา,23
+2400,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,24
+2501,Department of Architecture,ภาควิชาสถาปัตยกรรมศาสตร์,25
+2502,Department of Industrial Design,ภาควิชาการออกแบบอุตสาหกรรม,25
+2503,Department of Urban and Regional Planning,ภาควิชาการวางแผนภาคและเมือง,25
+2600,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,26
+2601,Department of Accountancy,ภาควิชาการบัญชี,26
+2604,Department of Banking and Finance,ภาควิชาการธนาคารและการเงิน,26
+2715,Department of Curriculum and Instruction,ภาควิชาหลักสูตรและการสอน,27
+2735,"Department of Art,Music, and Dance Education",ภาควิชาศิลปะ ดนตรีและนาฏศิลป์ศึกษา,27
+2765,Department of Educational Technology and Communications,ภาควิชาเทคโนโลยีและสื่อสารการศึกษา,27
+2800,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,28
+2804,Department of Speech Communication and Performing Arts,ภาควิชาวาทวิทยาและสื่อสารการแสดง,28
+2900,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,29
+2951,Area of Concentration of Political Economy,หมวดวิชาเศรษฐศาสตร์การเมือง,29
+2952,Field of Study of Economics,สาขาวิชาเศรษฐศาสตร์,29
+3000,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,30
+3014,Department of Preventive and Social Medicine,ภาควิชาเวชศาสตร์ป้องกันและสังคม,30
+3100,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,31
+3105,Department of Veterinary Pathology,ภาควิชาพยาธิวิทยา,31
+3107,Department of Veterinary Medicine,ภาควิชาอายุรศาสตร์,31
+3200,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,32
+3300,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,33
+3311,Department of Pharmaceutics and Industrial Pharmacy,ภาควิชาวิทยาการเภสัชกรรมและเภสัชอุตสาหกรรม,33
+3347,Field of Study of Pharmaceutical Care,สาขาวิชาการบริบาลทางเภสัชกรรม,33
+3400,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,34
+3500,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,35
+3502,Department of Creative Arts,ภาควิชานฤมิตศิลป์,35
+3504,Department of Dance,ภาควิชานาฏยศิลป์,35
+3647,Field of Study of Nursing Science,สาขาวิชาพยาบาลศาสตร์,36
+3700,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,37
+3701,Department of Clinical Chemistry,ภาควิชาเคมีคลินิก,37
+3704,Department of Physical Therapy,ภาควิชากายภาพบำบัด,37
+3800,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,38
+3900,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,39
+4000,Common Course,ไม่สังกัดภาควิชา/เทียบเท่า,40

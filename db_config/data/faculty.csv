@@ -1,0 +1,53 @@
+faculty_code,name_en,name_th,name_abbrev
+01,THE SIRINDHORN THAI LANGUAGE INSTITUTE,สถาบันภาษาไทยสิรินธร,CSTC
+02,OFFICE OF ACADEMIC AFFAIRS,ศูนย์การศึกษาทั่วไป,GEN
+20,GRADUATE SCHOOL,บัณฑิตวิทยาลัย,GRAD
+21,FACULTY OF ENGINEERING,คณะวิศวกรรมศาสตร์,ENGI
+22,FACULTY OF ARTS,คณะอักษรศาสตร์,ARTS
+23,FACULTY OF SCIENCE,คณะวิทยาศาสตร์,SCI
+24,FACULTY OF POLITICAL SCIENCE,คณะรัฐศาสตร์,POL
+25,FACULTY OF ARCHITECTURE,คณะสถาปัตยกรรมศาสตร์,ARCH
+26,FACULTY OF COMMERCE AND ACCOUNTANCY,คณะพาณิชยศาสตร์และการบัญชี,COMM
+27,FACULTY OF EDUCATION,คณะครุศาสตร์,EDU
+28,FACULTY OF COMMUNICATION ARTS,คณะนิเทศศาสตร์,CART
+29,FACULTY OF ECONOMICS,คณะเศรษฐศาสตร์,ECON
+30,FACULTY OF MEDICINE,คณะแพทยศาสตร์,MED
+31,FACULTY OF VETERINARY SCIENCE,คณะสัตวแพทยศาสตร์,VET
+32,FACULTY OF DENTISTRY,คณะทันตแพทยศาสตร์,DENT
+33,FACULTY OF PHARMACEUTICAL SCIENCES,คณะเภสัชศาสตร์,PHAR
+34,FACULTY OF LAW,คณะนิติศาสตร์,LAW
+36,FACULTY OF NURSING,คณะพยาบาลศาสตร์,NURS
+37,FACULTY OF ALLIED HEALTH SCIENCES,คณะสหเวชศาสตร์,ALLI
+38,FACULTY OF PSYCHOLOGY,คณะจิตวิทยา,PSY
+51,COLLEGE OF POPULATION STUDIES,วิทยาลัยประชากรศาสตร์,CPS
+52,SOCIAL RESEARCH INSTITUTE,สถาบันวิจัยสังคม,\N
+53,COLLEGE OF PUBLIC HEALTH SCIENCES,วิทยาลัยวิทยาศาสตร์สาธารณสุข,CPHS
+55,LANGUAGE INSTITUTE,สถาบันภาษา,LANG
+56,COMPUTER SERVICE CENTER,สถาบันบริการคอมพิวเตอร์,\N
+57,OFFICE OF THE REGISTRAR,สำนักงานการทะเบียน,REGISTRAR
+59,THE SCIENTIFIC AND TECHNOLOGICAL RESEARCH EQU,ศูนย์เครื่องมือวิจัยวิทยาศาสตร์และเทคโนโลยี,\N
+60,ASIAN STUDIES INSTITUTE,สถาบันเอเชียศึกษา,\N
+61,BIOTECHNOLOGY & GENETIC ENGINEERING INSTITUTE,สถาบันเทคโนโลยีชีวภาพและวิศวกรรมพันธุศาสตร์,\N
+63,THE PETROLEUM & PETROCHEMICAL COLLEGE,วิทยาลัยปิโตรเลียมและปิโตรเคมี,\N
+68,COLLEGE OF PUBLIC HEALTH,วิทยาลัยการสาธารณสุข,CPH
+90,\N,สถานศึกษาเคมีปฏิบัติ,\N
+91,THE THAI RED CROSS COLLEGE OF NURSING,วิทยาลัยพยาบาลสภากาชาดไทย,\N
+92,POLICE NURSING COLLEGE,วิทยาลัยพยาบาลตำรวจ,\N
+99,OTHER UNIVERSITY,มหาวิทยาลัยอื่น,\N
+50,OFFICE OF ACADEMIC RESOURCES,สำนักงานวิทยทรัพยากร,CAR
+69,HIGHER EDUCATION OF OPPORTUNITY ENHANCEMENT OF CHULALONGKORN UNIVERSI,โครงการขยายโอกาสอุดมศึกษาแห่งจุฬาลงกรณ์มหาวิทยาลัย,HEOE
+64,ENERGY RESEARCH INSTITUTE,สถาบันวิจัยพลังงาน,\N
+65,AQUATIC RESOURCES RESEARCH INSTITUTE,สถาบันวิจัยทรัพยากรทางน้ำ,\N
+66,MERCHANT MARINE INSTITUTE,สถาบันพาณิชยนาวี,\N
+67,\N,สถาบันเทคโนโลยีเพื่อการพัฒนาชนบท,\N
+70,CHULALONGKORN UNIVERSITY SPORTS CENTER,ศูนย์กีฬาแห่งจุฬาลงกรณ์มหาวิทยาลัย,CUSC
+71,THE BUILDING MANAGEMENT OFFICE,สำนักงานจัดการอาคาร,BMO
+72,TRANSPORTATION INSTITUTE,สถาบันการขนส่ง,TRI
+40,SCHOOL OF AGRICULTURAL RESOURCES,สำนักวิชาทรัพยากรการเกษตร,SAR
+4,OFFICE OF PHYSICAL RESOURCES MANAGEMENT,สำนักบริหารระบบกายภาพ,PRM
+35,FACULTY OF FINE AND APPLIED ARTS,คณะศิลปกรรมศาสตร์,FAA
+39,FACULTY OF SPORTS SCIENCE,คณะวิทยาศาสตร์การกีฬา,SPSC
+54,ENVIRONMENTAL RESEARCH INSTITUTE,สถาบันวิจัยสภาวะแวดล้อม,\N
+58,SASIN GRADUATE INSTITUTE OF BUSINESS ADMINISTION,สถาบันบัณฑิตบริหารธุรกิจ ศศินทร์ฯ,IEMT
+62,METALLURGY & MATERIALS SCIENCE RESEARCH INSTITUTE,สถาบันวิจัยโลหะและวัสดุ,\N
+73,OFFICE OF INTERNATIONAL AFFAIRS AND GLOBAL NETWORK,สำนักบริหารวิรัชกิจและเครือข่ายนานาชาติ,\N
