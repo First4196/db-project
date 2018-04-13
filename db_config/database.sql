@@ -23,10 +23,11 @@ DROP TABLE IF EXISTS `account`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account` (
+  `account_id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(30) NOT NULL,
   `password` varchar(40) NOT NULL,
   `type` enum('student','professor','moderator') DEFAULT NULL,
-  PRIMARY KEY (`username`)
+  PRIMARY KEY (`account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -74,7 +75,7 @@ DROP TABLE IF EXISTS `building`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `building` (
-  `building_id` int(3) NOT NULL,
+  `building_id` char(4) NOT NULL,
   `name_en` varchar(50) DEFAULT NULL,
   `name_th` varchar(50) DEFAULT NULL,
   `name_abbrev` varchar(15) DEFAULT NULL,
@@ -108,8 +109,8 @@ CREATE TABLE `class_arrangement` (
   `course_year` int(4) NOT NULL,
   `course_semester` int(1) NOT NULL,
   `course_section` int(2) NOT NULL,
-  `room_no` int(5) NOT NULL,
-  `building_id` int(3) NOT NULL,
+  `room_no` varchar(10) NOT NULL,
+  `building_id` char(4) NOT NULL,
   `class_date` int(1) NOT NULL,
   `class_start_time` time NOT NULL,
   `class_finish_time` time NOT NULL,
@@ -169,7 +170,7 @@ CREATE TABLE `course_section` (
   `course_section` int(2) NOT NULL,
   `capacity` int(4) DEFAULT NULL,
   `student_count` int(4) DEFAULT NULL,
-  `lecturer` varchar(11) DEFAULT NULL,
+  `lecturer` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`course_id`,`course_year`,`course_semester`,`course_section`),
   KEY `course_section_fk2` (`lecturer`),
   CONSTRAINT `course_section_fk1` FOREIGN KEY (`course_id`, `course_year`, `course_semester`) REFERENCES `course_sem` (`course_id`, `course_year`, `course_semester`),
@@ -197,7 +198,7 @@ CREATE TABLE `course_sem` (
   `course_id` varchar(7) NOT NULL,
   `course_year` int(4) NOT NULL,
   `course_semester` int(1) NOT NULL,
-  `leader` varchar(11) DEFAULT NULL,
+  `leader` varchar(30) DEFAULT NULL,
   `midterm_exam` varchar(50) DEFAULT NULL,
   `final_exam` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`course_id`,`course_year`,`course_semester`),
@@ -334,8 +335,8 @@ DROP TABLE IF EXISTS `exam_arrangement`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `exam_arrangement` (
-  `room_no` int(5) NOT NULL,
-  `building_id` int(3) NOT NULL,
+  `room_no` varchar(10) NOT NULL,
+  `building_id` char(4) NOT NULL,
   `exam_name` varchar(50) NOT NULL,
   `exam_date` date NOT NULL,
   `start_time` time NOT NULL,
@@ -470,7 +471,7 @@ DROP TABLE IF EXISTS `professor`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `professor` (
-  `professor_id` varchar(11) NOT NULL,
+  `professor_id` varchar(30) NOT NULL,
   `fname_th` varchar(50) DEFAULT NULL,
   `lname_th` varchar(50) DEFAULT NULL,
   `fname_en` varchar(50) DEFAULT NULL,
@@ -493,6 +494,7 @@ CREATE TABLE `professor` (
 
 LOCK TABLES `professor` WRITE;
 /*!40000 ALTER TABLE `professor` DISABLE KEYS */;
+INSERT INTO `professor` VALUES ('athasit.s','athasit','surarerk','อรรถสิทธิ์','สุรฤกษ์','ASR',NULL,NULL,NULL,NULL,NULL),('jaidee.r','jaidee','ruknisit','ใจดี','รักนิสิต','JRN',NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `professor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -509,6 +511,7 @@ CREATE TABLE `record` (
   `course_year` int(4) NOT NULL,
   `course_semester` int(1) NOT NULL,
   `grade` enum('A','B+','B','C+','C','D+','D','F','W','S','U','X','I','M') DEFAULT NULL,
+  `hidden` tinyint(1) NOT NULL,
   PRIMARY KEY (`student_id`,`course_id`,`course_year`,`course_semester`),
   KEY `record_fk2` (`course_id`,`course_year`,`course_semester`),
   CONSTRAINT `record_fk1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`),
@@ -536,7 +539,8 @@ CREATE TABLE `request` (
   `student_id` varchar(11) NOT NULL,
   `request_time` datetime NOT NULL,
   `form_name` varchar(30) DEFAULT NULL,
-  `details` varchar(200) DEFAULT NULL,
+  `details` varchar(300) DEFAULT NULL,
+  `status` enum('Accepted','Rejected','Pending') DEFAULT NULL,
   PRIMARY KEY (`student_id`,`request_time`),
   CONSTRAINT `request_fk` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -559,8 +563,8 @@ DROP TABLE IF EXISTS `room`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `room` (
-  `room_no` int(5) NOT NULL,
-  `building_id` int(3) NOT NULL,
+  `room_no` varchar(10) NOT NULL,
+  `building_id` char(4) NOT NULL,
   `room_type` varchar(20) DEFAULT NULL,
   `seat_capacity` int(4) DEFAULT NULL,
   PRIMARY KEY (`room_no`,`building_id`),
@@ -588,8 +592,8 @@ DROP TABLE IF EXISTS `student`;
 CREATE TABLE `student` (
   `student_id` varchar(11) NOT NULL,
   `fname_th` varchar(50) DEFAULT NULL,
-  `fname_en` varchar(50) DEFAULT NULL,
   `lname_th` varchar(50) DEFAULT NULL,
+  `fname_en` varchar(50) DEFAULT NULL,
   `lname_en` varchar(50) DEFAULT NULL,
   `gender` enum('M','F') DEFAULT NULL,
   `date_of_birth` date DEFAULT NULL,
@@ -600,13 +604,16 @@ CREATE TABLE `student` (
   `graduated` tinyint(1) DEFAULT NULL,
   `gpax` double DEFAULT NULL,
   `credit_gain` int(3) DEFAULT NULL,
-  `curriculum` varchar(5) DEFAULT NULL,
-  `advisor` varchar(11) DEFAULT NULL,
+  `curriculum` char(5) DEFAULT NULL,
+  `department` char(4) DEFAULT NULL,
+  `advisor` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`student_id`),
-  KEY `stdent_fk1` (`curriculum`),
-  KEY `stdent_fk2` (`advisor`),
-  CONSTRAINT `stdent_fk1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`curriculum_id`),
-  CONSTRAINT `stdent_fk2` FOREIGN KEY (`advisor`) REFERENCES `professor` (`professor_id`)
+  KEY `student_fk1` (`curriculum`),
+  KEY `student_fk2` (`department`),
+  KEY `student_fk3` (`advisor`),
+  CONSTRAINT `student_fk1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`curriculum_id`),
+  CONSTRAINT `student_fk2` FOREIGN KEY (`department`) REFERENCES `department` (`department_id`),
+  CONSTRAINT `student_fk3` FOREIGN KEY (`advisor`) REFERENCES `professor` (`professor_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -616,6 +623,7 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
+INSERT INTO `student` VALUES ('508888021','แปดปี','ก็ไม่จบ','eightyears','noend','M','1990-01-12','ค่ายปรับทัศนคติ','0801121112','taksin@dubai.com',2007,0,0,0,NULL,NULL,'athasit.s'),('530101321','เรียนโคตรดี','เกรดสวยงาม','studysogood','gradeperfect','F','1993-12-31','Earth','0844444444','prayuth@thailand.com',2010,1,4,999,NULL,NULL,'athasit.s'),('551555221','เหนื่อยก็พัก','ไม่เรียนก็เท','sotired','justdrop','F','1996-02-28','Somewhere','0812345678','sotired@justdrop.com',2012,0,0,0,NULL,NULL,'jaidee.r'),('555','ทด','สอบ','just','test','M','1987-06-02','Addr','080','a@b.c',2012,0,0,0,NULL,NULL,'athasit.s'),('601111021','วิศวะ','ปิีหนึ่ง','engineer','freshy','M','2001-05-11','CU Dormitory','0808080808','engineer@cu.com',2017,0,0,0,NULL,NULL,'jaidee.r');
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -627,7 +635,7 @@ DROP TABLE IF EXISTS `teaching`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `teaching` (
-  `professor_id` varchar(11) NOT NULL,
+  `professor_id` varchar(30) NOT NULL,
   `course_id` varchar(7) NOT NULL,
   `course_year` int(4) NOT NULL,
   `course_semester` int(1) NOT NULL,
@@ -657,4 +665,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-11 12:33:39
+-- Dump completed on 2018-04-13 20:34:23

@@ -1,5 +1,6 @@
 student_id,fname_th,lname_th,fname_en,lname_en,gender,date_of_birth,address,mobile_no,email,entry_year,graduated,gpax,credit_gain,curriculum,department,advisor
-508888021,แปดปี,ก็ไม่จบ,eightyears,noend,M,1990-01-12,ค่ายปรับทัศนคติ,0801121112,taksin@dubai.com,2007,0,0,0,\N,\N,\N
-530101321,เรียนโคตรดี,เกรดสวยงาม,studysogood,gradeperfect,F,1993-12-31,Earth,0844444444,prayuth@thailand.com,2010,1,4.00,999,\N,\N,\N
-551555221,เหนื่อยก็พัก,ไม่เรียนก็เท,sotired,justdrop,F,1996-02-28,Somewhere,0812345678,sotired@justdrop.com,2012,0,0,0,\N,\N,\N
-601111021,วิศวะ,ปิีหนึ่ง,engineer,freshy,M,2001-05-11,CU Dormitory,0808080808,engineer@cu.com,2017,0,0,0,\N,\N,\N
+508888021,แปดปี,ก็ไม่จบ,eightyears,noend,M,1990-01-12,ค่ายปรับทัศนคติ,0801121112,taksin@dubai.com,2007,0,0,0,\N,\N,athasit.s
+530101321,เรียนโคตรดี,เกรดสวยงาม,studysogood,gradeperfect,F,1993-12-31,Earth,0844444444,prayuth@thailand.com,2010,1,4.00,999,\N,\N,athasit.s
+551555221,เหนื่อยก็พัก,ไม่เรียนก็เท,sotired,justdrop,F,1996-02-28,Somewhere,0812345678,sotired@justdrop.com,2012,0,0,0,\N,\N,jaidee.r
+555,ทด,สอบ,just,test,M,1987-06-02,Addr,080,a@b.c,2012,0,0,0,\N,\N,athasit.s
+601111021,วิศวะ,ปิีหนึ่ง,engineer,freshy,M,2001-05-11,CU Dormitory,0808080808,engineer@cu.com,2017,0,0,0,\N,\N,jaidee.r

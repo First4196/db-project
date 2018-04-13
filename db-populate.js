@@ -1,19 +1,22 @@
 // Create all tables needed
-
+const topo = require('./db-topo.js');
 const config = require('./config.js');
 const mysql = require('promise-mysql');
 const fs = require('fs');
 
-const file_to_table = [
-    ["student.csv","STUDENT"]
-]
+const table_to_file = {
+    "professor" : "professor.csv",
+    "student" : "student.csv"
+}
 
 async function main() {
     console.log("Populating database ...");
     let connection = await mysql.createConnection(config.database);
     try {
         //await connection.query("SET FOREIGN_KEY_CHECKS=0;");
-        for(let [file,table] of file_to_table) {
+        for(let table of topo.getTopoOfTable().filter(name => table_to_file[name]!==undefined)) {
+            let file = table_to_file[table];
+            
             console.log("Clearing "+table);
             await connection.query(`DELETE FROM ${table}`);
             
