@@ -6,7 +6,13 @@ const fs = require('fs');
 
 const table_to_file = {
     "professor" : "professor.csv",
-    "student" : "student.csv"
+    "student" : "student.csv",
+    "course" : "course.csv",
+    "course_sem" : "course_sem.csv",
+    "course_section" : "course_section.csv",
+    "department" : "department.csv",
+    "faculty" : "faculty.csv",
+    "account" : "account.csv"
 }
 
 async function main() {
