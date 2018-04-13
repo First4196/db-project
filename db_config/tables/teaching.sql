@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS teaching(
-	professor_id VARCHAR(11) NOT NULL,
+	professor_id VARCHAR(30) NOT NULL,
     course_id VARCHAR(7) NOT NULL,
     course_year INTEGER(4) NOT NULL,
     course_semester INTEGER(1) NOT NULL,

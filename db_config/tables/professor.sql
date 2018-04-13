@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS professor(
-    professor_id VARCHAR(11) NOT NULL,
+    professor_id VARCHAR(30) NOT NULL,
     fname_th VARCHAR(50),
     lname_th VARCHAR(50),
     fname_en VARCHAR(50),
