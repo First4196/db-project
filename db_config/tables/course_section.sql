@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS course_section(
     CONSTRAINT course_section_pk PRIMARY KEY (course_id, course_year, course_semester, course_section),
     CONSTRAINT course_section_fk1 FOREIGN KEY (course_id, course_year, course_semester)
     REFERENCES course_sem(course_id, course_year, course_semester),
-    CONSTRAINT student_non_neg_num CHECK(capacity >= 0 AND student_count >= 0)
+    CONSTRAINT course_sec_non_neg_num CHECK(capacity >= 0 AND student_count >= 0)
 );
