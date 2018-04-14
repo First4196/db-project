@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS room(
     room_type VARCHAR(20),
     seat_capacity INTEGER(4),
     CONSTRAINT room_pk PRIMARY KEY (room_no, building_id),
-    CONSTRAINT room_fk FOREIGN KEY (building_id) REFERENCES building(building_id)
+    CONSTRAINT room_fk FOREIGN KEY (building_id) REFERENCES building(building_id),
+    CONSTRAINT room_non_neg_cap CHECK(seat_capacity >= 0) 
 );
