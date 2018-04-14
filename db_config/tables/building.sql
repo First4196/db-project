@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS building(
     longitude DECIMAL(11,8),
     faculty CHAR(2),
     CONSTRAINT building_pk PRIMARY KEY (building_id),
-    CONSTRAINT building_fk FOREIGN KEY (faculty) REFERENCES faculty(faculty_code)
+    CONSTRAINT building_fk FOREIGN KEY (faculty) REFERENCES faculty(faculty_code),
+    CONSTRAINT building_name_not_null CHECK(name_en IS NOT NULL OR name_th IS NOT NULL)
 );
