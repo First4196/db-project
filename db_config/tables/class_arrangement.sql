@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS class_arrangement(
     course_semester INTEGER(1) NOT NULL,
     course_section INTEGER(2) NOT NULL,
     room_no VARCHAR(10) NOT NULL,
-	building_id CHAR(4) NOT NULL,
+    building_id CHAR(4) NOT NULL,
     class_date INTEGER(1) NOT NULL, # 1-Sunday, 2-Monday, ..., 7-Saturdat (follow datofweek in mysql)
     class_start_time TIME NOT NULL,
     class_finish_time TIME NOT NULL,
