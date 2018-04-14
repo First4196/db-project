@@ -5,5 +5,7 @@ CREATE TABLE IF NOT EXISTS curriculum(
     start_year INTEGER(4),
     faculty CHAR(2),
     CONSTRAINT curricululm_pk PRIMARY KEY (curriculum_id),
-    CONSTRAINT cuuriculum_fk FOREIGN KEY (faculty) REFERENCES faculty(faculty_code)
+    CONSTRAINT cuuriculum_fk FOREIGN KEY (faculty) REFERENCES faculty(faculty_code),
+    CONSTRAINT curriculum_name_not_null CHECK(name_en IS NOT NULL OR name_th IS NOT NULL),
+    CONSTRAINT curriculum_start_year CHECK(start_year >= 1899 AND start_year <= YEAR(CURDATE())+5)
 );
