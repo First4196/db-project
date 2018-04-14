@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS request(
-    student_id VARCHAR(11) NOT NULL,
+    student_id VARCHAR(10) NOT NULL,
     request_time DATETIME NOT NULL,
     form_name VARCHAR(30),
     details VARCHAR(300),
