@@ -9,5 +9,7 @@ CREATE TABLE IF NOT EXISTS course_sem(
     CONSTRAINT course_sem_fk1 FOREIGN KEY (course_id) REFERENCES course(course_id),
     CONSTRAINT course_sem_fk2 FOREIGN KEY (leader) REFERENCES professor(professor_id),
     CONSTRAINT course_sem_fk3 FOREIGN KEY (midterm_exam) REFERENCES exam(exam_name),
-    CONSTRAINT course_sem_fk4 FOREIGN KEY (final_exam) REFERENCES exam(exam_name)
+    CONSTRAINT course_sem_fk4 FOREIGN KEY (final_exam) REFERENCES exam(exam_name),
+    CONSTRAINT course_sem_year CHECK(start_year >= 1899 AND start_year <= YEAR(CURDATE())+1),
+    CONSTRAINT course_sem_sem CHECK(course_semester > 0 AND course_semester <= 3)
 );
