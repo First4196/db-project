@@ -11,5 +11,8 @@ CREATE TABLE IF NOT EXISTS professor(
     email VARCHAR(50),
     department CHAR(4),
     CONSTRAINT professor_pk PRIMARY KEY (professor_id),
-    CONSTRAINT professor_fk FOREIGN KEY (department) REFERENCES department(department_id)
+    CONSTRAINT professor_fk FOREIGN KEY (department) REFERENCES department(department_id),
+    CONSTRAINT professor_age CHECK(TIMEDIFF(date_of_birth, CURDATE()) > 10),
+    CONSTRAINT professor_mobile_no CHECK(mobile_no REGEXP '^[+]{0,1}[0-9]+$'),
+    CONSTRAINT professor_email CHECK(email LIKE '%_@__%.__%')
 );
