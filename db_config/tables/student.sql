@@ -19,5 +19,10 @@ CREATE TABLE IF NOT EXISTS student(
     CONSTRAINT student_pk PRIMARY KEY (student_id),
     CONSTRAINT student_fk1 FOREIGN KEY (curriculum) REFERENCES curriculum(curriculum_id),
     CONSTRAINT student_fk2 FOREIGN KEY (department) REFERENCES department(department_id),
-    CONSTRAINT student_fk3 FOREIGN KEY (advisor) REFERENCES professor(professor_id)
+    CONSTRAINT student_fk3 FOREIGN KEY (advisor) REFERENCES professor(professor_id),
+	CONSTRAINT student_age CHECK(TIMEDIFF(date_of_birth, CURDATE()) > 14),
+    CONSTRAINT student_mobile_no CHECK(mobile_no REGEXP '^[+]{0,1}[0-9]+$'),
+    CONSTRAINT student_email CHECK(email LIKE '%_@__%.__%'),
+    CONSTRAINT student_grade CHECK(gpax >= 0.0 AND gpax <=4.0),
+    CONSTRAINT student_non_neg_credit CHECK(credit_gain >= 0)
 );
