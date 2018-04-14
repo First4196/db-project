@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS student(
     lname_th VARCHAR(50),
     fname_en VARCHAR(50),
     lname_en VARCHAR(50),
-    gender ENUM('M','F'),
+    gender ENUM('M', 'F'),
     date_of_birth DATE,
     address VARCHAR(100),
     mobile_no VARCHAR(15),
