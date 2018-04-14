@@ -12,7 +12,8 @@ const table_to_file = {
     "course_section" : "course_section.csv",
     "department" : "department.csv",
     "faculty" : "faculty.csv",
-    "account" : "account.csv"
+    "account" : "account.csv",
+    "record" : "record.csv"
 }
 
 async function main() {
