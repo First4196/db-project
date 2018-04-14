@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS student(
-    student_id VARCHAR(11) NOT NULL,
-    fname_th VARCHAR(50),
-    lname_th VARCHAR(50),
+    student_id VARCHAR(10) NOT NULL,
+    fname_th VARCHAR(50) NOT NULL,
+    lname_th VARCHAR(50) NOT NULL,
     fname_en VARCHAR(50),
     lname_en VARCHAR(50),
     gender ENUM('M', 'F'),
