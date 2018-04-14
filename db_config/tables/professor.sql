@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS professor(
     professor_id VARCHAR(30) NOT NULL,
+    fname_en VARCHAR(50) NOT NULL,
+    lname_en VARCHAR(50) NOT NULL,
     fname_th VARCHAR(50),
     lname_th VARCHAR(50),
-    fname_en VARCHAR(50),
-    lname_en VARCHAR(50),
     name_abbrev VARCHAR(3),
     date_of_birth DATE,
     address VARCHAR(100),
