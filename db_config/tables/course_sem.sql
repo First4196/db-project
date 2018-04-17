@@ -1,7 +1,9 @@
+DROP TABLE course_sem;
+
 CREATE TABLE IF NOT EXISTS course_sem(
     course_id VARCHAR(7) NOT NULL,
-    course_year INTEGER(4) NOT NULL,
-    course_semester INTEGER(1) NOT NULL,
+    course_year INTEGER(4) UNSIGNED NOT NULL,
+    course_semester INTEGER(1) UNSIGNED NOT NULL,
     leader VARCHAR(30),
     midterm_exam VARCHAR(50),
     final_exam VARCHAR(50),

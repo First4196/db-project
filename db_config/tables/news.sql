@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS news(
     course_id VARCHAR(7) NOT NULL,
     course_year INTEGER(4) NOT NULL,
-    course_semester INTEGER(1) NOT NULL,
-    course_section INTEGER(2) NOT NULL,
+    course_semester INTEGER(1) UNSIGNED NOT NULL,
+    course_section INTEGER(2) UNSIGNED NOT NULL,
     publish_time DATETIME NOT NULL,
     title VARCHAR(20),
     detail TEXT,
