@@ -13,6 +13,6 @@ CREATE TABLE IF NOT EXISTS class_arrangement(
     CONSTRAINT class_arr_fk1 FOREIGN KEY (course_id,course_year,course_semester,course_section)
     REFERENCES course_section(course_id,course_year,course_semester,course_section),
     CONSTRAINT class_arr_fk2 FOREIGN KEY (room_no, building_id) REFERENCES room(room_no, building_id),
-	CONSTRAINT class_days_of_week CHECK(class_date > 0 AND class_date <= 7),
+	CONSTRAINT class_days_of_week CHECK(class_date BETWEEN 1 AND 7),
 	CONSTRAINT class_time_duration CHECK(class_start_time < class_finish_time)
 );
