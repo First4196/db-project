@@ -643,7 +643,7 @@ CREATE TABLE `teaching` (
   `course_year` int(4) unsigned NOT NULL,
   `course_semester` int(1) unsigned NOT NULL,
   `course_section` int(2) unsigned NOT NULL,
-  PRIMARY KEY (`professor_id`,`course_id`,`course_year`,`course_semester`),
+  PRIMARY KEY (`professor_id`,`course_id`,`course_year`,`course_semester`,`course_section`),
   KEY `teaching_fk2` (`course_id`,`course_year`,`course_semester`,`course_section`),
   CONSTRAINT `teaching_fk1` FOREIGN KEY (`professor_id`) REFERENCES `professor` (`professor_id`),
   CONSTRAINT `teaching_fk2` FOREIGN KEY (`course_id`, `course_year`, `course_semester`, `course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`)
@@ -668,4 +668,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-23 20:52:14
+-- Dump completed on 2018-04-23 21:24:07
