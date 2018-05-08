@@ -16,6 +16,9 @@ require_once('header.php');
 </div>
 
 <div class="container">
+  <div id="alertDiv">
+    
+  </div>
   <div class="row">
     <div class="col-md-4 my-2">
       <div class="card">
@@ -40,7 +43,7 @@ require_once('header.php');
         <div class="card-body">
           <h5 class="card-title">My course</h5>
           <p class="card-text">View your courses and information about them including timetable and news.</p>
-          <a href="student_course.php" class="btn btn-primary">Go</a>
+          <a href="student_mycourse.php" class="btn btn-primary">Go</a>
         </div>
       </div>
     </div>
@@ -65,6 +68,30 @@ require_once('header.php');
     
   </div>
 </div>
+
+<script>
+  
+  let username = '<?php echo $_SESSION["account_username"]; ?>';
+  
+  async function checkAlert() {
+    let hasUnpaidBill = await queryParsed('check_unpaid_bill_of_student',username);
+    if(hasUnpaidBill[0].result == 'yes') {
+      $("#alertDiv").append($(`<div class="alert alert-warning hidden" role="alert">
+        You have an unpaid bill. Go to <a href="student_info.php" class="alert-link">My information</a> to view more details.
+      </div>`));
+    }
+    
+    let curSem = getCurrentSemester();
+    let credit = await queryParsed('get_credit_of_student_of_year',username, curSem.course_year, curSem.course_semester );
+    
+    if(credit[0].total_credit > 22) {
+      $("#alertDiv").append($(`<div class="alert alert-warning hidden" role="alert">
+        Your total credit of this semester is ${credit[0].total_credit} which exceeds the limit of 22. Go to <a href="student_registration.php" class="alert-link">Registration</a> to view more details.
+      </div>`));
+    }
+  }
+  checkAlert();
+</script>
 
 <?php
 require_once('footer.php');
