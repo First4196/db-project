@@ -1,34 +1,31 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.0.1
--- https://www.phpmyadmin.net/
+-- version 4.0.10.11
+-- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 20, 2018 at 07:58 AM
--- Server version: 10.1.32-MariaDB
--- PHP Version: 7.2.5
+-- Generation Time: May 08, 2018 at 07:26 AM
+-- Server version: 5.1.73
+-- PHP Version: 7.0.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `db-project`
 --
-CREATE DATABASE IF NOT EXISTS `db-project` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `db-project`;
 
 DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add_course_for_student` (IN `sid` VARCHAR(11), IN `cid` VARCHAR(7), IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_course_for_student`(IN `sid` VARCHAR(11), IN `cid` VARCHAR(7), IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))
+    MODIFIES SQL DATA
 BEGIN
 	DECLARE scount INTEGER;
     DECLARE cap INTEGER;
@@ -58,23 +55,20 @@ BEGIN
 	END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add_news_to_course` (IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2), IN `nTitle` VARCHAR(50) CHARSET utf8, IN `nDetail` TEXT CHARSET utf8)  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_news_to_course`(IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2), IN `nTitle` VARCHAR(50) CHARSET utf8, IN `nDetail` TEXT CHARSET utf8)
+    NO SQL
 INSERT INTO news 
 (course_id,course_year,course_semester,course_section,title,detail) 
 VALUES 
 (cid,cyear,csem,csec,nTitle,nDetail)$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add_one_account` (IN `username` VARCHAR(30), IN `password` VARCHAR(40), IN `type` ENUM('student','professor','staff'))  NO SQL
-BEGIN
-INSERT INTO `account`(`username`, `password`, `type`, `last_request_visit`) VALUES (username, password, type, NOW());
-SELECT 'success';
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add_request_of_student` (IN `sid` VARCHAR(10), IN `fName` VARCHAR(30) CHARSET utf8, IN `fText` TEXT CHARSET utf8)  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_request_of_student`(IN `sid` VARCHAR(10), IN `fName` VARCHAR(30) CHARSET utf8, IN `fText` TEXT CHARSET utf8)
+    MODIFIES SQL DATA
 INSERT INTO request (student_id,form_name,details,status) VALUES
 (sid,fName,fText,'Pending')$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `change_bill_status_to_late` (IN `yr` INT, IN `sem` INT)  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `change_bill_status_to_late`(IN `yr` INT, IN `sem` INT)
+    MODIFIES SQL DATA
 BEGIN
 	UPDATE bill
     SET payment_status = 'Late2'
@@ -87,7 +81,8 @@ BEGIN
 	IN (SELECT student_id FROM bill WHERE payment_status LIKE 'Late%'));
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `change_course_section_for_student` (IN `sid` VARCHAR(11), IN `cid` VARCHAR(7), IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `change_course_section_for_student`(IN `sid` VARCHAR(11), IN `cid` VARCHAR(7), IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))
+    MODIFIES SQL DATA
 BEGIN
 	DECLARE scount INTEGER;
     DECLARE cap INTEGER;
@@ -106,23 +101,8 @@ BEGIN
 	END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `check_new_news` (IN `sid` VARCHAR(30))  NO SQL
-BEGIN
-	IF EXISTS (SELECT * FROM enrollment E, news N WHERE E.student_id = sid AND E.course_id = N.course_id AND E.course_year = N.course_year AND E.course_semester = N.course_semester AND E.course_section = N.course_section AND E.last_news_visit < N.publish_time) THEN
-		SELECT 'yes' AS result;
-	ELSE SELECT 'no' AS result;
-	END IF;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `check_new_request` (IN `sid` VARCHAR(30))  NO SQL
-BEGIN
-	IF EXISTS (SELECT * FROM account A, request R WHERE A.username = sid AND A.username = R.student_id AND A.last_request_visit < R.response_time) THEN
-		SELECT 'yes' AS result;
-	ELSE SELECT 'no' AS result;
-	END IF;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `check_unpaid_bill_of_student` (IN `sid` VARCHAR(10))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_unpaid_bill_of_student`(IN `sid` VARCHAR(10))
+    NO SQL
 BEGIN
 	IF EXISTS (SELECT * FROM bill WHERE payment_status!='paid' AND student_id=sid) THEN
 		SELECT 'yes' AS result;
@@ -130,10 +110,11 @@ BEGIN
 	END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `create_bill_sem` (IN `yr` INT, IN `sem` INT)  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_bill_sem`(IN `yr` INT, IN `sem` INT)
+    MODIFIES SQL DATA
 BEGIN
-	INSERT INTO bill(student_id,academic_year,semester,payment_status)
-    SELECT student_id, yr, sem, 'Unpaid'
+	INSERT INTO bill(student_id,academic_year,semester,amount,payment_status)
+    SELECT student_id, yr, sem, 21000, 'Unpaid'
     FROM student S
     WHERE graduated = 0 AND 
 NOT EXISTS (SELECT * FROM bill B WHERE 
@@ -142,32 +123,31 @@ NOT EXISTS (SELECT * FROM bill B WHERE
             B.student_id = S.student_id);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `create_grade_of_student_of_course` (IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `create_grade_of_student_of_course`(IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1))
+    NO SQL
 INSERT INTO record 
 SELECT S.student_id, cid, cyear, csem, 'X', 1 FROM student S WHERE
 EXISTS (SELECT * FROM enrollment E WHERE S.student_id = E.student_id AND E.course_id = cid AND E.course_year = cyear AND E.course_semester = csem) AND
 NOT EXISTS (SELECT * FROM record R WHERE S.student_id = R.student_id AND R.course_id = cid AND R.course_year = cyear AND R.course_semester = csem)$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `edit_one_account` (IN `username` VARCHAR(30), IN `password` VARCHAR(40), IN `type` ENUM('student','professor','staff'))  NO SQL
-BEGIN
-UPDATE account A SET A.password=password, A.type=type WHERE A.username = username;
-SELECT 'success';
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_advised_students` (IN `prof_id` VARCHAR(30) CHARSET utf8)  READS SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_advised_students`(IN `prof_id` VARCHAR(30) CHARSET utf8)
+    READS SQL DATA
 SELECT * FROM student
 WHERE advisor = prof_id$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_accounts` ()  READS SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_accounts`()
+    READS SQL DATA
 SELECT *
 FROM account$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_building` ()  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_building`()
+    NO SQL
 SELECT *,
 get_faculty_name_from_id(faculty) AS faculty_name
 FROM building ORDER BY faculty_name$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_grade_of_student_of_course` (IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_grade_of_student_of_course`(IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1))
+    NO SQL
 SELECT
 S.student_id AS student_id,
 S.fname_en AS student_fname,
@@ -185,26 +165,31 @@ E.course_year = cyear AND
 E.course_semester = csem AND
 E.student_id = R.student_id$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_professor` ()  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_professor`()
+    NO SQL
 SELECT * ,
 D.name_en AS department_name
 FROM professor P
 LEFT JOIN department D ON D.department_id = P.department$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_unpaid_bill` ()  NO SQL
-SELECT B.student_id, B.academic_year, B.semester, B.payment_status, C.fee as amount FROM bill B, student S, curriculum C WHERE B.student_id = S.student_id AND S.curriculum = C.curriculum_id AND B.payment_status IN ('Unpaid','Late1','Late2') ORDER BY academic_year DESC, semester DESC$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_unpaid_bill`()
+    NO SQL
+SELECT * FROM bill B WHERE B.payment_status IN ('Unpaid','Late1','Late2') ORDER BY academic_year DESC, semester DESC$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_bill_of_student` (IN `sid` VARCHAR(10))  NO SQL
-SELECT B.student_id, B.academic_year, B.semester, B.payment_status, C.fee as amount FROM bill B, student S, curriculum C WHERE B.student_id = S.student_id AND S.curriculum = C.curriculum_id AND B.student_id=sid ORDER BY academic_year DESC, semester DESC$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_bill_of_student`(IN `sid` VARCHAR(10))
+    NO SQL
+SELECT * FROM bill WHERE student_id=sid ORDER BY academic_year DESC, semester DESC$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_building_detail` (IN `bid` CHAR(4) CHARSET utf8)  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_building_detail`(IN `bid` CHAR(4) CHARSET utf8)
+    NO SQL
 SELECT *,
 get_faculty_name_from_id(faculty) AS faculty_name
 FROM building B
 LEFT JOIN room R ON R.building_id = B.building_id
 WHERE B.building_id = bid$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_final_of_student` (IN `sid` VARCHAR(10) CHARSET utf8, IN `yr` INT(4), IN `sem` INT(1))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_final_of_student`(IN `sid` VARCHAR(10) CHARSET utf8, IN `yr` INT(4), IN `sem` INT(1))
+    NO SQL
 BEGIN
 	SELECT *,
 A.course_section AS course_section,
@@ -223,7 +208,8 @@ LEFT JOIN exam_arrangement final ON final.exam_name = Cs.final_exam;
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_midterm_of_student` (IN `sid` VARCHAR(10) CHARSET utf8, IN `yr` INT(4), IN `sem` INT(1))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_midterm_of_student`(IN `sid` VARCHAR(10) CHARSET utf8, IN `yr` INT(4), IN `sem` INT(1))
+    NO SQL
 BEGIN
 	SELECT *,
     mid.exam_date AS midterm_date,
@@ -241,7 +227,8 @@ BEGIN
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_of_professor_with_time` (IN `pid` VARCHAR(30) CHARSET utf8, IN `yr` INT(4), IN `sem` INT(1))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_of_professor_with_time`(IN `pid` VARCHAR(30) CHARSET utf8, IN `yr` INT(4), IN `sem` INT(1))
+    NO SQL
 BEGIN
 	SELECT *
     FROM ((SELECT course_id, course_semester, course_section
@@ -252,7 +239,8 @@ BEGIN
 	LEFT JOIN course ON A.course_id = course.course_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_of_student_with_time` (IN `sid` VARCHAR(11), IN `yr` INT(4), IN `sem` INT(1))  READS SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_of_student_with_time`(IN `sid` VARCHAR(11), IN `yr` INT(4), IN `sem` INT(1))
+    READS SQL DATA
 BEGIN
 	SELECT *,
 A.course_section AS course_section,
@@ -260,8 +248,7 @@ B.room_no AS class_room,
 B.building_id AS class_building,
 (SELECT GROUP_CONCAT(professor_id SEPARATOR ', ')
 FROM teaching T GROUP BY course_id, course_year, course_semester, course_section
-HAVING T.course_id = A.course_id AND T.course_year = yr AND T.course_semester = sem AND T.course_section = A.course_section) AS teachingProf, 
-CASE WHEN EXISTS (SELECT * FROM enrollment E, news N WHERE E.student_id = sid AND E.course_id = A.course_id AND E.course_year = yr AND E.course_semester = sem AND N.course_id = A.course_id AND N.course_year = yr AND N.course_semester = sem AND N.course_section = E.course_section AND E.last_news_visit < N.publish_time) THEN 'yes' ELSE 'no'END AS hasNewNews
+HAVING T.course_id = A.course_id AND T.course_year = yr AND T.course_semester = sem AND T.course_section = A.course_section) AS teachingProf
 
     FROM ((SELECT E.course_id, E.course_section
     FROM enrollment E
@@ -272,7 +259,8 @@ CASE WHEN EXISTS (SELECT * FROM enrollment E, news N WHERE E.student_id = sid AN
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_credit_of_student_of_year` (IN `sid` VARCHAR(10), IN `year` INT(4), IN `sem` INT(1))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_credit_of_student_of_year`(IN `sid` VARCHAR(10), IN `year` INT(4), IN `sem` INT(1))
+    NO SQL
 SELECT SUM(credit) AS total_credit FROM course C WHERE
 course_id IN 
     (SELECT course_id 
@@ -282,7 +270,8 @@ course_id IN
     E.course_year = year AND
     E.course_semester = sem)$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_current_course_of_student` (IN `year` INT(4), IN `sem` INT(1), IN `sid` VARCHAR(11))  READS SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_current_course_of_student`(IN `year` INT(4), IN `sem` INT(1), IN `sid` VARCHAR(11))
+    READS SQL DATA
 SELECT *, 
 IF(Cs.course_section=t1.course_section, 'YES', 'NO') AS my_section 
 FROM course C, 
@@ -297,17 +286,20 @@ Cs.course_id = t1.course_id AND
 Cs.course_year = t1.course_year AND
 Cs.course_semester = t1.course_semester$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_grade_of_student` (IN `studentId` VARCHAR(11))  READS SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_grade_of_student`(IN `studentId` VARCHAR(11))
+    READS SQL DATA
 SELECT * 
 FROM 
 (SELECT * FROM record WHERE student_id=studentId) AS t1
 JOIN course 
 ON t1.course_id=course.course_id AND t1.hidden=0$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_graduation_pending_student` ()  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_graduation_pending_student`()
+    NO SQL
 select * from student where graduated=1$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_lesson_plan_of_student` (IN `sid` VARCHAR(10))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_lesson_plan_of_student`(IN `sid` VARCHAR(10))
+    NO SQL
 SELECT
 C.course_id AS course_id,
 C.course_abbrev AS course_name,
@@ -324,10 +316,12 @@ S.student_id = sid AND
 S.curriculum = L.curriculum_id AND
 L.course_id = C.course_id$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_news_of_course` (IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_news_of_course`(IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))
+    NO SQL
 SELECT * FROM news WHERE course_id = cid AND course_year = cyear AND course_semester = csem AND course_section = csec ORDER BY publish_time DESC$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_news_of_course_of_student` (IN `cid` VARCHAR(7), IN `cyear` INT(4) UNSIGNED, IN `csem` INT(1) UNSIGNED, IN `sid` VARCHAR(10))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_news_of_course_of_student`(IN `cid` VARCHAR(7), IN `cyear` INT(4) UNSIGNED, IN `csem` INT(1) UNSIGNED, IN `sid` VARCHAR(10))
+    NO SQL
 SELECT * FROM news N WHERE 
 N.course_id = cid AND
 N.course_year = cyear AND
@@ -335,10 +329,12 @@ N.course_semester = csem AND
 N.course_section IN (SELECT E.course_section FROM enrollment E WHERE E.student_id = sid AND E.course_id = cid AND E.course_year = cyear AND E.course_semester = csem)
 ORDER BY N.publish_time DESC$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_pending_request_list` ()  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_pending_request_list`()
+    NO SQL
 SELECT * FROM request R WHERE R.status='Pending' ORDER BY R.request_time$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_professor_info` (IN `pid` VARCHAR(30))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_professor_info`(IN `pid` VARCHAR(30))
+    NO SQL
 SELECT 
 professor_id,
 fname_en,
@@ -357,10 +353,12 @@ FROM professor P
 LEFT JOIN department D ON D.department_id = P.department
 WHERE P.professor_id = pid$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_request_of_student` (IN `sid` VARCHAR(10))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_request_of_student`(IN `sid` VARCHAR(10))
+    NO SQL
 SELECT * FROM request R WHERE R.student_id = sid ORDER BY request_time DESC$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_student_info` (IN `sid` VARCHAR(11))  READS SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_student_info`(IN `sid` VARCHAR(11))
+    READS SQL DATA
 SELECT 
 S.student_id,
 S.fname_en,
@@ -393,7 +391,8 @@ S.student_id = sid AND
 P.professor_id = S.advisor AND
 D.department_id = S.department$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_student_of_course_section` (IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_student_of_course_section`(IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))
+    NO SQL
 SELECT * FROM enrollment E 
 LEFT JOIN student S ON E.student_id = S.student_id
 WHERE
@@ -402,20 +401,24 @@ E.course_year = cyear AND
 E.course_semester = csem AND
 E.course_section = csec$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_teaching_courses` (IN `prof_id` VARCHAR(30))  READS SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_teaching_courses`(IN `prof_id` VARCHAR(30))
+    READS SQL DATA
 SELECT * FROM teaching
 WHERE professor_id = prof_id$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `graduatedplusplus` (IN `sid` VARCHAR(11))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `graduatedplusplus`(IN `sid` VARCHAR(11))
+    NO SQL
 update student
 set graduated=graduated+1
 where student_id=sid$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `hello` (IN `n` INT, IN `s` VARCHAR(10))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `hello`(IN `n` INT, IN `s` VARCHAR(10))
+BEGIN
  SELECT concat('hello',n+1,s);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `remove_course_for_student` (IN `sid` VARCHAR(11), IN `cid` VARCHAR(7), IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))  MODIFIES SQL DATA
+CREATE DEFINER=`root`@`localhost` PROCEDURE `remove_course_for_student`(IN `sid` VARCHAR(11), IN `cid` VARCHAR(7), IN `cyear` INT(4), IN `csem` INT(1), IN `csec` INT(2))
+    MODIFIES SQL DATA
 BEGIN
 DELETE FROM enrollment WHERE
 enrollment.student_id = sid AND
@@ -426,13 +429,15 @@ enrollment.course_section = csec;
 SELECT 'OK' AS result;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `remove_one_account` (IN `toRemove` VARCHAR(30))  NO SQL
-BEGIN
-DELETE FROM account WHERE username=toRemove;
-SELECT 'success';
-END$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `remove_one_account`(IN `toRemove` VARCHAR(30))
+    NO SQL
+begin
+delete from account where username=toRemove;
+select 'success';
+end$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `search_course_for_student` (IN `year` INT(4), IN `sem` INT(1), IN `query` VARCHAR(30), IN `sid` VARCHAR(11))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `search_course_for_student`(IN `year` INT(4), IN `sem` INT(1), IN `query` VARCHAR(30), IN `sid` VARCHAR(11))
+    NO SQL
 SELECT 
 `course_section`.*,
 `course_sem`.*,
@@ -479,7 +484,8 @@ LEFT JOIN exam_arrangement finalArr ON finalArr.exam_name = final.exam_name
 
 LEFT JOIN class_arrangement CA ON CA.course_id = course.course_id AND CA.course_year = year AND CA.course_semester = sem AND CA.course_section = course_section.course_section$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `search_course_of_year` (IN `year` INT(4), IN `sem` INT(1), IN `query` VARCHAR(50) CHARSET utf8)  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `search_course_of_year`(IN `year` INT(4), IN `sem` INT(1), IN `query` VARCHAR(50) CHARSET utf8)
+    NO SQL
 SELECT 
 `course_section`.*,
 `course_sem`.*,
@@ -517,7 +523,8 @@ LEFT JOIN exam_arrangement finalArr ON finalArr.exam_name = final.exam_name
 
 LEFT JOIN class_arrangement CA ON CA.course_id = course.course_id AND CA.course_year = year AND CA.course_semester = sem AND CA.course_section = course_section.course_section$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `search_course_with_prerequisite_for_student` (IN `year` INT(4), IN `sem` INT(1), IN `query` VARCHAR(30), IN `sid` VARCHAR(10))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `search_course_with_prerequisite_for_student`(IN `year` INT(4), IN `sem` INT(1), IN `query` VARCHAR(30), IN `sid` VARCHAR(10))
+    NO SQL
 SELECT 
 *,
 C.course_id AS course_id,
@@ -537,29 +544,28 @@ JOIN prerequisite P ON P.course = C.course_id
 JOIN course PC ON PC.course_id = P.precourse
 WHERE course_sem.course_year = year AND course_sem.course_semester = sem$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_bill_paid` (IN `sid` VARCHAR(10) CHARSET utf8, IN `year` INT(4), IN `sem` INT(1))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `set_bill_paid`(IN `sid` VARCHAR(10) CHARSET utf8, IN `year` INT(4), IN `sem` INT(1))
+    NO SQL
 UPDATE bill B SET payment_status='Paid' WHERE B.student_id = sid AND B.academic_year = year AND B.semester = sem$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_grade_of_student_of_course` (IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1), IN `sid` VARCHAR(10) CHARSET utf8, IN `grade` ENUM('A','B+','B','C+','C','D+','D','F','W','S','U','X','I','M') CHARSET utf8, IN `hidden` BOOLEAN)  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `set_grade_of_student_of_course`(IN `cid` VARCHAR(7) CHARSET utf8, IN `cyear` INT(4), IN `csem` INT(1), IN `sid` VARCHAR(10) CHARSET utf8, IN `grade` ENUM('A','B+','B','C+','C','D+','D','F','W','S','U','X','I','M') CHARSET utf8, IN `hidden` BOOLEAN)
+    NO SQL
 UPDATE record R SET R.grade=grade, R.hidden=hidden WHERE
 R.course_id = cid AND
 R.course_year = cyear AND
 R.course_semester = csem AND
 R.student_id = sid$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_last_news_visit` (IN `sid` VARCHAR(30), IN `cid` VARCHAR(7), IN `cyear` INT(4) UNSIGNED, IN `csem` INT(1) UNSIGNED)  NO SQL
-UPDATE enrollment E SET E.last_news_visit = NOW() WHERE E.student_id = sid AND E.course_id = cid AND E.course_year = cyear AND E.course_semester = csem$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_last_request_visit` (IN `username` VARCHAR(10) CHARSET utf8)  NO SQL
-UPDATE account A SET A.last_request_visit = NOW() WHERE A.username = username$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_request_status` (IN `sid` VARCHAR(10) CHARSET utf8, IN `reqTime` DATETIME, IN `status` ENUM('Accepted','Rejected','Pending'))  NO SQL
-UPDATE request R SET R.status=status, R.response_time = NOW() WHERE R.student_id = sid AND R.request_time = reqTime$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `set_request_status`(IN `sid` VARCHAR(10) CHARSET utf8, IN `reqTime` DATETIME, IN `status` ENUM('Accepted','Rejected','Pending'))
+    NO SQL
+UPDATE request R SET 
+R.status=status WHERE R.student_id = sid AND R.request_time = reqTime$$
 
 --
 -- Functions
 --
-CREATE DEFINER=`root`@`localhost` FUNCTION `get_curriculum_name_from_id` (`currId` VARCHAR(5)) RETURNS VARCHAR(50) CHARSET latin1 NO SQL
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_curriculum_name_from_id`(`currId` VARCHAR(5)) RETURNS varchar(50) CHARSET latin1
+    NO SQL
 BEGIN
 declare ret varchar(50);
 IF currId IS NULL THEN SET ret=NULL;
@@ -568,7 +574,8 @@ END IF;
 return ret;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `get_department_name_from_id` (`id` VARCHAR(4)) RETURNS VARCHAR(50) CHARSET latin1 NO SQL
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_department_name_from_id`(`id` VARCHAR(4)) RETURNS varchar(50) CHARSET latin1
+    NO SQL
 BEGIN
 declare ret varchar(50);
 IF id IS NULL THEN SET ret=NULL;
@@ -577,7 +584,8 @@ END IF;
 return ret;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `get_faculty_name_from_id` (`fid` CHAR(2) CHARSET utf8) RETURNS VARCHAR(50) CHARSET utf8 NO SQL
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_faculty_name_from_id`(`fid` CHAR(2) CHARSET utf8) RETURNS varchar(50) CHARSET utf8
+    NO SQL
 BEGIN
 declare ret varchar(50);
 IF fid IS NULL THEN SET fid=NULL;
@@ -586,7 +594,8 @@ END IF;
 return ret;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `get_grade_num` (`grade_letter` VARCHAR(2)) RETURNS DOUBLE NO SQL
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_grade_num`(`grade_letter` VARCHAR(2)) RETURNS double
+    NO SQL
 BEGIN
 	RETURN CASE
 		WHEN grade_letter = 'A' THEN 4
@@ -601,7 +610,8 @@ BEGIN
 	END;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `is_grade_cal` (`grade` VARCHAR(2)) RETURNS TINYINT(1) NO SQL
+CREATE DEFINER=`root`@`localhost` FUNCTION `is_grade_cal`(`grade` VARCHAR(2)) RETURNS tinyint(1)
+    NO SQL
 BEGIN
     DECLARE s INTEGER;
     
@@ -612,7 +622,8 @@ BEGIN
     RETURN s;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `is_grade_pass` (`grade` ENUM('A','B+','B','C+','C','D+','D','F','W','S','U','X','I','M') CHARSET utf8) RETURNS INT(11) NO SQL
+CREATE DEFINER=`root`@`localhost` FUNCTION `is_grade_pass`(`grade` ENUM('A','B+','B','C+','C','D+','D','F','W','S','U','X','I','M') CHARSET utf8) RETURNS int(11)
+    NO SQL
 BEGIN
     DECLARE s INTEGER;
     
@@ -631,27 +642,27 @@ DELIMITER ;
 -- Table structure for table `account`
 --
 
-CREATE TABLE `account` (
+CREATE TABLE IF NOT EXISTS `account` (
   `username` varchar(30) NOT NULL,
   `password` varchar(40) NOT NULL,
   `type` enum('student','professor','staff') NOT NULL,
-  `last_request_visit` datetime NOT NULL
+  PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `account`
 --
 
-INSERT INTO `account` (`username`, `password`, `type`, `last_request_visit`) VALUES
-('508888021', 'asdf1234', 'student', '2018-05-18 14:08:12'),
-('530101321', 'asdf1234', 'student', '2018-05-16 17:27:12'),
-('5304023830', 'asdf1234', 'student', '2018-05-19 12:44:08'),
-('551555221', 'asdf1234', 'student', '2018-05-16 17:27:12'),
-('555', 'asdf1234', 'student', '2018-05-18 13:29:05'),
-('5831001021', 'asdf1234', 'student', '2018-05-16 17:27:12'),
-('athasit.s', 'asdf1234', 'professor', '2018-05-16 17:27:12'),
-('jaidee.r', 'asdf1234', 'professor', '2018-05-16 17:27:12'),
-('prayuth.j', '44', 'staff', '2018-05-16 17:27:12');
+INSERT INTO `account` (`username`, `password`, `type`) VALUES
+('508888021', 'asdf1234', 'student'),
+('530101321', 'asdf1234', 'student'),
+('551555221', 'asdf1234', 'student'),
+('555', 'asdf1234', 'student'),
+('5831001021', 'asdf1234', 'student'),
+('601111021', 'asdf1234', 'student'),
+('athasit.s', 'asdf1234', 'professor'),
+('jaidee.r', 'asdf1234', 'professor'),
+('prayuth.j', '44', 'staff');
 
 -- --------------------------------------------------------
 
@@ -659,236 +670,241 @@ INSERT INTO `account` (`username`, `password`, `type`, `last_request_visit`) VAL
 -- Table structure for table `bill`
 --
 
-CREATE TABLE `bill` (
+CREATE TABLE IF NOT EXISTS `bill` (
   `student_id` varchar(10) NOT NULL,
-  `academic_year` int(4) UNSIGNED NOT NULL,
-  `semester` int(1) UNSIGNED NOT NULL,
-  `payment_status` enum('Paid','Unpaid','Late1','Late2') DEFAULT NULL
+  `academic_year` int(4) unsigned NOT NULL,
+  `semester` int(1) unsigned NOT NULL,
+  `amount` decimal(10,0) unsigned DEFAULT NULL,
+  `payment_status` enum('Paid','Unpaid','Late1','Late2') DEFAULT NULL,
+  PRIMARY KEY (`student_id`,`semester`,`academic_year`),
+  KEY `academic_year` (`academic_year`),
+  KEY `academic_year_2` (`academic_year`,`semester`,`payment_status`),
+  KEY `payment_status` (`payment_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `bill`
 --
 
-INSERT INTO `bill` (`student_id`, `academic_year`, `semester`, `payment_status`) VALUES
-('508888021', 2017, 2, 'Paid'),
-('555', 2017, 1, 'Paid'),
-('5608467434', 2017, 2, 'Paid'),
-('5613501134', 2017, 2, 'Paid'),
-('5627989836', 2017, 2, 'Paid'),
-('5628645738', 2017, 2, 'Paid'),
-('5629099938', 2017, 2, 'Paid'),
-('5629101138', 2017, 2, 'Paid'),
-('5639956239', 2017, 2, 'Paid'),
-('5666434424', 2017, 2, 'Paid'),
-('5831001021', 2015, 1, 'Paid'),
-('5831001021', 2016, 1, 'Paid'),
-('5831001021', 2017, 1, 'Paid'),
-('5831001021', 2015, 2, 'Paid'),
-('5831001021', 2016, 2, 'Paid'),
-('5304023830', 2017, 2, 'Late2'),
-('5308088931', 2017, 2, 'Late2'),
-('5312101133', 2017, 2, 'Late2'),
-('5353801021', 2017, 2, 'Late2'),
-('5354689522', 2017, 2, 'Late2'),
-('5354806122', 2017, 2, 'Late2'),
-('5354901022', 2017, 2, 'Late2'),
-('5358991022', 2017, 2, 'Late2'),
-('5361034121', 2017, 2, 'Late2'),
-('5361067321', 2017, 2, 'Late2'),
-('5361967521', 2017, 2, 'Late2'),
-('5380799927', 2017, 2, 'Late2'),
-('5381034023', 2017, 2, 'Late2'),
-('5382156423', 2017, 2, 'Late2'),
-('5382189023', 2017, 2, 'Late2'),
-('5383478623', 2017, 2, 'Late2'),
-('5386678423', 2017, 2, 'Late2'),
-('5388689223', 2017, 2, 'Late2'),
-('5394955927', 2017, 2, 'Late2'),
-('5394978127', 2017, 2, 'Late2'),
-('5401911220', 2017, 2, 'Late2'),
-('5403323630', 2017, 2, 'Late2'),
-('5403789128', 2017, 2, 'Late2'),
-('5404511130', 2017, 2, 'Late2'),
-('5404689330', 2017, 2, 'Late2'),
-('5404767330', 2017, 2, 'Late2'),
-('5404811130', 2017, 2, 'Late2'),
-('5406011230', 2017, 2, 'Late2'),
-('5406945631', 2017, 2, 'Late2'),
-('5407034331', 2017, 2, 'Late2'),
-('5408123531', 2017, 2, 'Late2'),
-('5408589431', 2017, 2, 'Late2'),
-('5410067133', 2017, 2, 'Late2'),
-('5410591033', 2017, 2, 'Late2'),
-('5412156337', 2017, 2, 'Late2'),
-('5412166937', 2017, 2, 'Late2'),
-('5413803834', 2017, 2, 'Late2'),
-('5413911232', 2017, 2, 'Late2'),
-('5414078232', 2017, 2, 'Late2'),
-('5415011233', 2017, 2, 'Late2'),
-('5418911133', 2017, 2, 'Late2'),
-('5420256239', 2017, 2, 'Late2'),
-('5420805239', 2017, 2, 'Late2'),
-('5421944939', 2017, 2, 'Late2'),
-('5452089221', 2017, 2, 'Late2'),
-('5453811221', 2017, 2, 'Late2'),
-('5455755921', 2017, 2, 'Late2'),
-('5465901124', 2017, 2, 'Late2'),
-('5467034621', 2017, 2, 'Late2'),
-('5467091021', 2017, 2, 'Late2'),
-('5467156121', 2017, 2, 'Late2'),
-('5471011223', 2017, 2, 'Late2'),
-('5471055923', 2017, 2, 'Late2'),
-('5471066923', 2017, 2, 'Late2'),
-('5471978423', 2017, 2, 'Late2'),
-('5488967827', 2017, 2, 'Late2'),
-('5489323427', 2017, 2, 'Late2'),
-('5493567525', 2017, 2, 'Late2'),
-('5494378327', 2017, 2, 'Late2'),
-('5499911227', 2017, 2, 'Late2'),
-('5500401120', 2017, 2, 'Late2'),
-('5500445420', 2017, 2, 'Late2'),
-('5500456020', 2017, 2, 'Late2'),
-('5500578620', 2017, 2, 'Late2'),
-('5500634320', 2017, 2, 'Late2'),
-('5500644920', 2017, 2, 'Late2'),
-('5500656620', 2017, 2, 'Late2'),
-('5501034320', 2017, 2, 'Late2'),
-('5501045235', 2017, 2, 'Late2'),
-('5501078135', 2017, 2, 'Late2'),
-('5501078429', 2017, 2, 'Late2'),
-('5501967235', 2017, 2, 'Late2'),
-('5501977935', 2017, 2, 'Late2'),
-('5502067129', 2017, 2, 'Late2'),
-('5504934528', 2017, 2, 'Late2'),
-('5506989231', 2017, 2, 'Late2'),
-('5507967031', 2017, 2, 'Late2'),
-('5508434434', 2017, 2, 'Late2'),
-('5508445034', 2017, 2, 'Late2'),
-('5508934731', 2017, 2, 'Late2'),
-('5508955931', 2017, 2, 'Late2'),
-('5510701133', 2017, 2, 'Late2'),
-('5510789433', 2017, 2, 'Late2'),
-('5510791033', 2017, 2, 'Late2'),
-('5511056235', 2017, 2, 'Late2'),
-('5512178737', 2017, 2, 'Late2'),
-('5513034732', 2017, 2, 'Late2'),
-('5513901032', 2017, 2, 'Late2'),
-('5513911232', 2017, 2, 'Late2'),
-('5513934432', 2017, 2, 'Late2'),
-('5513956732', 2017, 2, 'Late2'),
-('5513977932', 2017, 2, 'Late2'),
-('5513989632', 2017, 2, 'Late2'),
-('551555221', 2017, 2, 'Late2'),
-('5519756035', 2017, 2, 'Late2'),
-('5520478139', 2017, 2, 'Late2'),
-('5520967139', 2017, 2, 'Late2'),
-('5523211237', 2017, 2, 'Late2'),
-('5525611237', 2017, 2, 'Late2'),
-('5527366938', 2017, 2, 'Late2'),
-('5527934536', 2017, 2, 'Late2'),
-('5527956836', 2017, 2, 'Late2'),
-('5529901138', 2017, 2, 'Late2'),
-('5539023539', 2017, 2, 'Late2'),
-('5539034139', 2017, 2, 'Late2'),
-('5539056439', 2017, 2, 'Late2'),
-('5539967839', 2017, 2, 'Late2'),
-('555', 2017, 2, 'Late2'),
-('5554622922', 2017, 2, 'Late2'),
-('5558023622', 2017, 2, 'Late2'),
-('5558067122', 2017, 2, 'Late2'),
-('5558911222', 2017, 2, 'Late2'),
-('5558945622', 2017, 2, 'Late2'),
-('5558966922', 2017, 2, 'Late2'),
-('5565023524', 2017, 2, 'Late2'),
-('5565034124', 2017, 2, 'Late2'),
-('5565901124', 2017, 2, 'Late2'),
-('5565911124', 2017, 2, 'Late2'),
-('5565933924', 2017, 2, 'Late2'),
-('5565991024', 2017, 2, 'Late2'),
-('5577988926', 2017, 2, 'Late2'),
-('5581934125', 2017, 2, 'Late2'),
-('5581945825', 2017, 2, 'Late2'),
-('5583434426', 2017, 2, 'Late2'),
-('5583456726', 2017, 2, 'Late2'),
-('5583477926', 2017, 2, 'Late2'),
-('5592077930', 2017, 2, 'Late2'),
-('5592123030', 2017, 2, 'Late2'),
-('5593545325', 2017, 2, 'Late2'),
-('5595301027', 2017, 2, 'Late2'),
-('5596178425', 2017, 2, 'Late2'),
-('5596901125', 2017, 2, 'Late2'),
-('5601001135', 2017, 2, 'Late2'),
-('5601023035', 2017, 2, 'Late2'),
-('5601034735', 2017, 2, 'Late2'),
-('5601991035', 2017, 2, 'Late2'),
-('5602044929', 2017, 2, 'Late2'),
-('5602067229', 2017, 2, 'Late2'),
-('5604945228', 2017, 2, 'Late2'),
-('5604967528', 2017, 2, 'Late2'),
-('5608434534', 2017, 2, 'Late2'),
-('5622034038', 2017, 2, 'Late2'),
-('5622045738', 2017, 2, 'Late2'),
-('5622056338', 2017, 2, 'Late2'),
-('5623189437', 2017, 2, 'Late2'),
-('5623267437', 2017, 2, 'Late2'),
-('5623434037', 2017, 2, 'Late2'),
-('5624956037', 2017, 2, 'Late2'),
-('5627189838', 2017, 2, 'Late2'),
-('5627399938', 2017, 2, 'Late2'),
-('5627945236', 2017, 2, 'Late2'),
-('5627978136', 2017, 2, 'Late2'),
-('5666445024', 2017, 2, 'Late2'),
-('5666467324', 2017, 2, 'Late2'),
-('5676501126', 2017, 2, 'Late2'),
-('5676577926', 2017, 2, 'Late2'),
-('5676601126', 2017, 2, 'Late2'),
-('5681956525', 2017, 2, 'Late2'),
-('5685667626', 2017, 2, 'Late2'),
-('5685778526', 2017, 2, 'Late2'),
-('5685989526', 2017, 2, 'Late2'),
-('5693934125', 2017, 2, 'Late2'),
-('5693945825', 2017, 2, 'Late2'),
-('5693956425', 2017, 2, 'Late2'),
-('5702134834', 2017, 2, 'Late2'),
-('5702145434', 2017, 2, 'Late2'),
-('5702191034', 2017, 2, 'Late2'),
-('5704445729', 2017, 2, 'Late2'),
-('5704489229', 2017, 2, 'Late2'),
-('5704499929', 2017, 2, 'Late2'),
-('5704955928', 2017, 2, 'Late2'),
-('5704967628', 2017, 2, 'Late2'),
-('5705499929', 2017, 2, 'Late2'),
-('5705655929', 2017, 2, 'Late2'),
-('5723011240', 2017, 2, 'Late2'),
-('5723067640', 2017, 2, 'Late2'),
-('5723091040', 2017, 2, 'Late2'),
-('5723145640', 2017, 2, 'Late2'),
-('5723178540', 2017, 2, 'Late2'),
-('5723191040', 2017, 2, 'Late2'),
-('5723223640', 2017, 2, 'Late2'),
-('5723256540', 2017, 2, 'Late2'),
-('5723911240', 2017, 2, 'Late2'),
-('5724456036', 2017, 2, 'Late2'),
-('5724478336', 2017, 2, 'Late2'),
-('5724734636', 2017, 2, 'Late2'),
-('5724805536', 2017, 2, 'Late2'),
-('5725922936', 2017, 2, 'Late2'),
-('5733045321', 2017, 2, 'Late2'),
-('5734456321', 2017, 2, 'Late2'),
-('5734934721', 2017, 2, 'Late2'),
-('5737034021', 2017, 2, 'Late2'),
-('5738389721', 2017, 2, 'Late2'),
-('5799545228', 2017, 2, 'Late2'),
-('5799591028', 2017, 2, 'Late2'),
-('5830056221', 2017, 2, 'Late2'),
-('5830067321', 2017, 2, 'Late2'),
-('5830601121', 2017, 2, 'Late2'),
-('5830656321', 2017, 2, 'Late2'),
-('5830691021', 2017, 2, 'Late2'),
-('5830978321', 2017, 2, 'Late2'),
-('5831001021', 2017, 2, 'Late2'),
-('601111021', 2017, 2, 'Late2');
+INSERT INTO `bill` (`student_id`, `academic_year`, `semester`, `amount`, `payment_status`) VALUES
+('508888021', 2017, 2, '21000', 'Paid'),
+('5304023830', 2017, 2, '21000', 'Late2'),
+('5308088931', 2017, 2, '21000', 'Late2'),
+('5312101133', 2017, 2, '21000', 'Late2'),
+('5353801021', 2017, 2, '21000', 'Late2'),
+('5354689522', 2017, 2, '21000', 'Late2'),
+('5354806122', 2017, 2, '21000', 'Late2'),
+('5354901022', 2017, 2, '21000', 'Late2'),
+('5358991022', 2017, 2, '21000', 'Late2'),
+('5361034121', 2017, 2, '21000', 'Late2'),
+('5361067321', 2017, 2, '21000', 'Late2'),
+('5361967521', 2017, 2, '21000', 'Late2'),
+('5380799927', 2017, 2, '21000', 'Late2'),
+('5381034023', 2017, 2, '21000', 'Late2'),
+('5382156423', 2017, 2, '21000', 'Late2'),
+('5382189023', 2017, 2, '21000', 'Late2'),
+('5383478623', 2017, 2, '21000', 'Late2'),
+('5386678423', 2017, 2, '21000', 'Late2'),
+('5388689223', 2017, 2, '21000', 'Late2'),
+('5394955927', 2017, 2, '21000', 'Late2'),
+('5394978127', 2017, 2, '21000', 'Late2'),
+('5401911220', 2017, 2, '21000', 'Late2'),
+('5403323630', 2017, 2, '21000', 'Late2'),
+('5403789128', 2017, 2, '21000', 'Late2'),
+('5404511130', 2017, 2, '21000', 'Late2'),
+('5404689330', 2017, 2, '21000', 'Late2'),
+('5404767330', 2017, 2, '21000', 'Late2'),
+('5404811130', 2017, 2, '21000', 'Late2'),
+('5406011230', 2017, 2, '21000', 'Late2'),
+('5406945631', 2017, 2, '21000', 'Late2'),
+('5407034331', 2017, 2, '21000', 'Late2'),
+('5408123531', 2017, 2, '21000', 'Late2'),
+('5408589431', 2017, 2, '21000', 'Late2'),
+('5410067133', 2017, 2, '21000', 'Late2'),
+('5410591033', 2017, 2, '21000', 'Late2'),
+('5412156337', 2017, 2, '21000', 'Late2'),
+('5412166937', 2017, 2, '21000', 'Late2'),
+('5413803834', 2017, 2, '21000', 'Late2'),
+('5413911232', 2017, 2, '21000', 'Late2'),
+('5414078232', 2017, 2, '21000', 'Late2'),
+('5415011233', 2017, 2, '21000', 'Late2'),
+('5418911133', 2017, 2, '21000', 'Late2'),
+('5420256239', 2017, 2, '21000', 'Late2'),
+('5420805239', 2017, 2, '21000', 'Late2'),
+('5421944939', 2017, 2, '21000', 'Late2'),
+('5452089221', 2017, 2, '21000', 'Late2'),
+('5453811221', 2017, 2, '21000', 'Late2'),
+('5455755921', 2017, 2, '21000', 'Late2'),
+('5465901124', 2017, 2, '21000', 'Late2'),
+('5467034621', 2017, 2, '21000', 'Late2'),
+('5467091021', 2017, 2, '21000', 'Late2'),
+('5467156121', 2017, 2, '21000', 'Late2'),
+('5471011223', 2017, 2, '21000', 'Late2'),
+('5471055923', 2017, 2, '21000', 'Late2'),
+('5471066923', 2017, 2, '21000', 'Late2'),
+('5471978423', 2017, 2, '21000', 'Late2'),
+('5488967827', 2017, 2, '21000', 'Late2'),
+('5489323427', 2017, 2, '21000', 'Late2'),
+('5493567525', 2017, 2, '21000', 'Late2'),
+('5494378327', 2017, 2, '21000', 'Late2'),
+('5499911227', 2017, 2, '21000', 'Late2'),
+('5500401120', 2017, 2, '21000', 'Late2'),
+('5500445420', 2017, 2, '21000', 'Late2'),
+('5500456020', 2017, 2, '21000', 'Late2'),
+('5500578620', 2017, 2, '21000', 'Late2'),
+('5500634320', 2017, 2, '21000', 'Late2'),
+('5500644920', 2017, 2, '21000', 'Late2'),
+('5500656620', 2017, 2, '21000', 'Late2'),
+('5501034320', 2017, 2, '21000', 'Late2'),
+('5501045235', 2017, 2, '21000', 'Late2'),
+('5501078135', 2017, 2, '21000', 'Late2'),
+('5501078429', 2017, 2, '21000', 'Late2'),
+('5501967235', 2017, 2, '21000', 'Late2'),
+('5501977935', 2017, 2, '21000', 'Late2'),
+('5502067129', 2017, 2, '21000', 'Late2'),
+('5504934528', 2017, 2, '21000', 'Late2'),
+('5506989231', 2017, 2, '21000', 'Late2'),
+('5507967031', 2017, 2, '21000', 'Late2'),
+('5508434434', 2017, 2, '21000', 'Late2'),
+('5508445034', 2017, 2, '21000', 'Late2'),
+('5508934731', 2017, 2, '21000', 'Late2'),
+('5508955931', 2017, 2, '21000', 'Late2'),
+('5510701133', 2017, 2, '21000', 'Late2'),
+('5510789433', 2017, 2, '21000', 'Late2'),
+('5510791033', 2017, 2, '21000', 'Late2'),
+('5511056235', 2017, 2, '21000', 'Late2'),
+('5512178737', 2017, 2, '21000', 'Late2'),
+('5513034732', 2017, 2, '21000', 'Late2'),
+('5513901032', 2017, 2, '21000', 'Late2'),
+('5513911232', 2017, 2, '21000', 'Late2'),
+('5513934432', 2017, 2, '21000', 'Late2'),
+('5513956732', 2017, 2, '21000', 'Late2'),
+('5513977932', 2017, 2, '21000', 'Late2'),
+('5513989632', 2017, 2, '21000', 'Late2'),
+('551555221', 2017, 2, '21000', 'Late2'),
+('5519756035', 2017, 2, '21000', 'Late2'),
+('5520478139', 2017, 2, '21000', 'Late2'),
+('5520967139', 2017, 2, '21000', 'Late2'),
+('5523211237', 2017, 2, '21000', 'Late2'),
+('5525611237', 2017, 2, '21000', 'Late2'),
+('5527366938', 2017, 2, '21000', 'Late2'),
+('5527934536', 2017, 2, '21000', 'Late2'),
+('5527956836', 2017, 2, '21000', 'Late2'),
+('5529901138', 2017, 2, '21000', 'Late2'),
+('5539023539', 2017, 2, '21000', 'Late2'),
+('5539034139', 2017, 2, '21000', 'Late2'),
+('5539056439', 2017, 2, '21000', 'Late2'),
+('5539967839', 2017, 2, '21000', 'Late2'),
+('555', 2017, 1, '99999', 'Paid'),
+('555', 2017, 2, '21000', 'Late2'),
+('5554622922', 2017, 2, '21000', 'Late2'),
+('5558023622', 2017, 2, '21000', 'Late2'),
+('5558067122', 2017, 2, '21000', 'Late2'),
+('5558911222', 2017, 2, '21000', 'Late2'),
+('5558945622', 2017, 2, '21000', 'Late2'),
+('5558966922', 2017, 2, '21000', 'Late2'),
+('5565023524', 2017, 2, '21000', 'Late2'),
+('5565034124', 2017, 2, '21000', 'Late2'),
+('5565901124', 2017, 2, '21000', 'Late2'),
+('5565911124', 2017, 2, '21000', 'Late2'),
+('5565933924', 2017, 2, '21000', 'Late2'),
+('5565991024', 2017, 2, '21000', 'Late2'),
+('5577988926', 2017, 2, '21000', 'Late2'),
+('5581934125', 2017, 2, '21000', 'Late2'),
+('5581945825', 2017, 2, '21000', 'Late2'),
+('5583434426', 2017, 2, '21000', 'Late2'),
+('5583456726', 2017, 2, '21000', 'Late2'),
+('5583477926', 2017, 2, '21000', 'Late2'),
+('5592077930', 2017, 2, '21000', 'Late2'),
+('5592123030', 2017, 2, '21000', 'Late2'),
+('5593545325', 2017, 2, '21000', 'Late2'),
+('5595301027', 2017, 2, '21000', 'Late2'),
+('5596178425', 2017, 2, '21000', 'Late2'),
+('5596901125', 2017, 2, '21000', 'Late2'),
+('5601001135', 2017, 2, '21000', 'Late2'),
+('5601023035', 2017, 2, '21000', 'Late2'),
+('5601034735', 2017, 2, '21000', 'Late2'),
+('5601991035', 2017, 2, '21000', 'Late2'),
+('5602044929', 2017, 2, '21000', 'Late2'),
+('5602067229', 2017, 2, '21000', 'Late2'),
+('5604945228', 2017, 2, '21000', 'Late2'),
+('5604967528', 2017, 2, '21000', 'Late2'),
+('5608434534', 2017, 2, '21000', 'Late2'),
+('5608467434', 2017, 2, '21000', 'Paid'),
+('5613501134', 2017, 2, '21000', 'Paid'),
+('5622034038', 2017, 2, '21000', 'Late2'),
+('5622045738', 2017, 2, '21000', 'Late2'),
+('5622056338', 2017, 2, '21000', 'Late2'),
+('5623189437', 2017, 2, '21000', 'Late2'),
+('5623267437', 2017, 2, '21000', 'Late2'),
+('5623434037', 2017, 2, '21000', 'Late2'),
+('5624956037', 2017, 2, '21000', 'Late2'),
+('5627189838', 2017, 2, '21000', 'Late2'),
+('5627399938', 2017, 2, '21000', 'Late2'),
+('5627945236', 2017, 2, '21000', 'Late2'),
+('5627978136', 2017, 2, '21000', 'Late2'),
+('5627989836', 2017, 2, '21000', 'Late2'),
+('5628645738', 2017, 2, '21000', 'Late2'),
+('5629099938', 2017, 2, '21000', 'Paid'),
+('5629101138', 2017, 2, '21000', 'Paid'),
+('5639956239', 2017, 2, '21000', 'Paid'),
+('5666434424', 2017, 2, '21000', 'Late2'),
+('5666445024', 2017, 2, '21000', 'Late2'),
+('5666467324', 2017, 2, '21000', 'Late2'),
+('5676501126', 2017, 2, '21000', 'Late2'),
+('5676577926', 2017, 2, '21000', 'Late2'),
+('5676601126', 2017, 2, '21000', 'Late2'),
+('5681956525', 2017, 2, '21000', 'Late2'),
+('5685667626', 2017, 2, '21000', 'Late2'),
+('5685778526', 2017, 2, '21000', 'Late2'),
+('5685989526', 2017, 2, '21000', 'Late2'),
+('5693934125', 2017, 2, '21000', 'Late2'),
+('5693945825', 2017, 2, '21000', 'Late2'),
+('5693956425', 2017, 2, '21000', 'Late2'),
+('5702134834', 2017, 2, '21000', 'Late2'),
+('5702145434', 2017, 2, '21000', 'Late2'),
+('5702191034', 2017, 2, '21000', 'Late2'),
+('5704445729', 2017, 2, '21000', 'Late2'),
+('5704489229', 2017, 2, '21000', 'Late2'),
+('5704499929', 2017, 2, '21000', 'Late2'),
+('5704955928', 2017, 2, '21000', 'Late2'),
+('5704967628', 2017, 2, '21000', 'Late2'),
+('5705499929', 2017, 2, '21000', 'Late2'),
+('5705655929', 2017, 2, '21000', 'Late2'),
+('5723011240', 2017, 2, '21000', 'Late2'),
+('5723067640', 2017, 2, '21000', 'Late2'),
+('5723091040', 2017, 2, '21000', 'Late2'),
+('5723145640', 2017, 2, '21000', 'Late2'),
+('5723178540', 2017, 2, '21000', 'Late2'),
+('5723191040', 2017, 2, '21000', 'Late2'),
+('5723223640', 2017, 2, '21000', 'Late2'),
+('5723256540', 2017, 2, '21000', 'Late2'),
+('5723911240', 2017, 2, '21000', 'Late2'),
+('5724456036', 2017, 2, '21000', 'Late2'),
+('5724478336', 2017, 2, '21000', 'Late2'),
+('5724734636', 2017, 2, '21000', 'Late2'),
+('5724805536', 2017, 2, '21000', 'Late2'),
+('5725922936', 2017, 2, '21000', 'Late2'),
+('5733045321', 2017, 2, '21000', 'Late2'),
+('5734456321', 2017, 2, '21000', 'Late2'),
+('5734934721', 2017, 2, '21000', 'Late2'),
+('5737034021', 2017, 2, '21000', 'Late2'),
+('5738389721', 2017, 2, '21000', 'Late2'),
+('5799545228', 2017, 2, '21000', 'Late2'),
+('5799591028', 2017, 2, '21000', 'Late2'),
+('5830056221', 2017, 2, '21000', 'Late2'),
+('5830067321', 2017, 2, '21000', 'Late2'),
+('5830601121', 2017, 2, '21000', 'Late2'),
+('5830656321', 2017, 2, '21000', 'Late2'),
+('5830691021', 2017, 2, '21000', 'Late2'),
+('5830978321', 2017, 2, '21000', 'Late2'),
+('5831001021', 2015, 1, '21000', 'Paid'),
+('5831001021', 2016, 1, '21000', 'Paid'),
+('5831001021', 2017, 1, '21000', 'Paid'),
+('5831001021', 2015, 2, '21000', 'Paid'),
+('5831001021', 2016, 2, '21000', 'Paid'),
+('5831001021', 2017, 2, '21000', 'Late2'),
+('601111021', 2017, 2, '21000', 'Late2');
 
 -- --------------------------------------------------------
 
@@ -896,14 +912,16 @@ INSERT INTO `bill` (`student_id`, `academic_year`, `semester`, `payment_status`)
 -- Table structure for table `building`
 --
 
-CREATE TABLE `building` (
+CREATE TABLE IF NOT EXISTS `building` (
   `building_id` char(4) NOT NULL,
   `name_en` varchar(50) DEFAULT NULL,
   `name_th` varchar(50) DEFAULT NULL,
   `name_abbrev` varchar(15) DEFAULT NULL,
   `latitude` decimal(10,8) DEFAULT NULL,
   `longitude` decimal(11,8) DEFAULT NULL,
-  `faculty` char(2) DEFAULT NULL
+  `faculty` char(2) DEFAULT NULL,
+  PRIMARY KEY (`building_id`),
+  KEY `building_fk` (`faculty`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -948,16 +966,18 @@ INSERT INTO `building` (`building_id`, `name_en`, `name_th`, `name_abbrev`, `lat
 -- Table structure for table `class_arrangement`
 --
 
-CREATE TABLE `class_arrangement` (
+CREATE TABLE IF NOT EXISTS `class_arrangement` (
   `course_id` varchar(7) NOT NULL,
-  `course_year` int(4) UNSIGNED NOT NULL,
-  `course_semester` int(1) UNSIGNED NOT NULL,
-  `course_section` int(2) UNSIGNED NOT NULL,
+  `course_year` int(4) unsigned NOT NULL,
+  `course_semester` int(1) unsigned NOT NULL,
+  `course_section` int(2) unsigned NOT NULL,
   `room_no` varchar(10) NOT NULL,
   `building_id` char(4) NOT NULL,
-  `class_date` int(1) UNSIGNED NOT NULL,
+  `class_date` int(1) unsigned NOT NULL,
   `class_start_time` time NOT NULL,
-  `class_finish_time` time NOT NULL
+  `class_finish_time` time NOT NULL,
+  PRIMARY KEY (`course_id`,`course_year`,`course_semester`,`course_section`,`room_no`,`building_id`,`class_date`,`class_start_time`),
+  KEY `class_arr_fk2` (`room_no`,`building_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -968,9 +988,6 @@ INSERT INTO `class_arrangement` (`course_id`, `course_year`, `course_semester`, 
 ('2109101', 2017, 2, 1, '409', 'BD01', 2, '08:00:00', '09:30:00'),
 ('2109101', 2017, 2, 1, '409', 'BD01', 4, '08:00:00', '09:30:00'),
 ('2109101', 2017, 2, 1, 'CAFE_ROOM', 'BD03', 4, '11:00:00', '13:00:00'),
-('2109101', 2017, 2, 2, '409', 'BD01', 3, '08:00:00', '09:30:00'),
-('2109101', 2017, 2, 2, '409', 'BD01', 5, '08:00:00', '09:30:00'),
-('2109101', 2017, 2, 2, 'CAFE_ROOM', 'BD03', 5, '11:00:00', '13:00:00'),
 ('2110101', 2017, 2, 1, 'LIB', 'BD01', 3, '08:00:00', '16:00:00'),
 ('2110101', 2017, 2, 2, 'LIB', 'BD01', 4, '08:00:00', '16:00:00'),
 ('2110101', 2017, 2, 3, 'LIB', 'BD01', 5, '08:00:00', '16:00:00'),
@@ -1000,12 +1017,13 @@ INSERT INTO `class_arrangement` (`course_id`, `course_year`, `course_semester`, 
 -- Table structure for table `course`
 --
 
-CREATE TABLE `course` (
+CREATE TABLE IF NOT EXISTS `course` (
   `course_id` varchar(7) NOT NULL,
   `course_name_en` varchar(50) DEFAULT NULL,
   `course_name_th` varchar(50) DEFAULT NULL,
   `course_abbrev` varchar(20) DEFAULT NULL,
-  `credit` int(3) UNSIGNED DEFAULT NULL
+  `credit` int(3) unsigned DEFAULT NULL,
+  PRIMARY KEY (`course_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -1385,7 +1403,8 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('2223223', 'KANJI STUDIES', 'คันจิศึกษา', 'KANJI STUD', 3),
 ('2223242', 'JAPANESE FOR BUSINESS COMMUNICATION', 'ภาษาญี่ปุ่นเพื่อการสื่อสารเชิงธุรกิจ', 'JP BUS COMM', 3),
 ('2223243', 'JAPAN TODAY', 'ญี่ปุ่นปัจจุบัน', 'JAPAN TODAY', 3),
-('2223251', 'JAPANESE FOR PROFESSION', 'ภาษาญี่ปุ่นเพื่อวิชาชีพ', 'JP PRO', 3),
+('2223251', 'JAPANESE FOR PROFESSION', 'ภาษาญี่ปุ่นเพื่อวิชาชีพ', 'JP PRO', 3);
+INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
 ('2223484', 'JAPANESE FOR TOURISM', 'ภาษาญี่ปุ่นสำหรับการท่องเที่ยว', 'JP TOURISM', 3),
 ('2224101', 'MALAY I', 'ภาษามาเลย์ 1', 'MALAY I', 3),
 ('2224108', 'INDONESIAN I', 'ภาษาอินโดนีเซีย 1', 'INDONESIAN I', 3),
@@ -1602,8 +1621,7 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('2305897', 'QUALIFYING EXAMINATION', 'การสอบวัดคุณสมบัติ', 'QUALIFYING EXAM', 0),
 ('2306532', 'GENERAL UNIT OPERATION', 'การดำเนินการหน่วยทั่วไป', 'GEN UNIT OPERATION', 3),
 ('2307580', 'SEISMIC HAZARD ANALYSIS', 'การวิเคราะห์อันตรายจากแผ่นดินไหว', 'SEIS HAZARD ANAL', 3),
-('2308303', 'HISTORY OF SCIENCE', NULL, 'HISTORY OF SCI', 3);
-INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
+('2308303', 'HISTORY OF SCIENCE', NULL, 'HISTORY OF SCI', 3),
 ('2308304', 'PHILOSOPHY OF ENVIRONMENTAL SCIENCE', 'ปรัชญาวิทยาศาสตร์สภาวะแวดล้อม', 'PHIL ENVI SCI', 3),
 ('2308309', 'FUNDAMENTAL AIR POLLUTION', 'มลพิษทางอากาศเบื้องต้น', 'FUND A POLL', 3),
 ('2308310', 'AIR AND NOISE POLLUTION LABORATORY', 'ปฏิบัติการด้านมลพิษทางอากาศและเสียง', 'A/N POLL LAB', 1),
@@ -1780,7 +1798,8 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('2501374', 'COMPUTER-AIDED DESIGN FUNDAMENTALS', 'มูลฐานการใช้คอมพิวเตอร์ช่วยออกแบบ', 'CAD FUND', 3),
 ('2501396', 'LIGHTING IN ARCHITECTURE', 'การให้แสงสว่างในงานสถาปัตยกรรม', 'LIGHTING ARCH', 3),
 ('2501398', 'ARCHITECTURAL WRITING', 'การเขียนความเรียงด้านสถาปัตยกรรม', 'ARCH WRITING', 3),
-('2501399', 'DWELLING AND ARCHITECTURE', 'การอยู่อาศัยและสถาปัตยกรรม', 'DWELL/ARCH', 3),
+('2501399', 'DWELLING AND ARCHITECTURE', 'การอยู่อาศัยและสถาปัตยกรรม', 'DWELL/ARCH', 3);
+INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
 ('2501401', 'PRACTICAL ARCHITECTURAL TRAINING', 'ฝึกงานสถาปัตยกรรม', 'PRAC ARCH TRAINING', 0),
 ('2501402', 'PROFESSIONAL PRACTICE', 'การปฏิบัติวิชาชีพสถาปัตยกรรม', 'PROF PRAC', 3),
 ('2501403', 'CONTEMPORARY ARCHITECTURE IN ASIA', 'สถาปัตยกรรมร่วมสมัยในเอเชีย', 'CONTEMP ARCH ASIA', 3),
@@ -2047,12 +2066,12 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('2717302', 'INNOVATIONS IN TEACHING AND CARING FOR YOUNG CHILD', 'นวัตกรรมการสอนและการเลี้ยงดูเด็กปฐมวัย', 'INNOVA TCH CHIL', 3),
 ('2717304', 'CURRICULUM AND INSTRUCTION FOR EARLY CHILDHOOD EDU', 'หลักสูตรและการสอนทางการศึกษาปฐมวัย', 'CURR INST ECE', 4),
 ('2717305', 'LEARNING AREAS INTEGRATION FOR PRESCHOOLERS', 'การบูรณาการสาระการเรียนรู้สำหรับเด็กอนุบาล', 'LAREA INTE PRESCH', 4),
-('2717306', 'ASSESSMENT AND ENHANCEMENT OF YOUNG CHILDREN\'S DEV', 'การประเมินและการส่งเสริมพัฒนาการและการเรียนรู้ของเ', 'ASS ENH CH DEV', 3),
+('2717306', 'ASSESSMENT AND ENHANCEMENT OF YOUNG CHILDREN''S DEV', 'การประเมินและการส่งเสริมพัฒนาการและการเรียนรู้ของเ', 'ASS ENH CH DEV', 3),
 ('2717339', 'PROMOTING INFANT AND TODDLER DEVELOPMENT', 'การส่งเสริมพัฒนาการสำหรับเด็กวัยทารกและวัยเตาะแตะ', 'PROM INFT TOD DEV', 2),
 ('2717340', 'ENHANCEMENT OF EMOTIONAL AND SOCIAL DEVELOPMENT OF', 'การส่งเสริมพัฒนาการทางอารมณ์และสังคมของเด็กปฐมวัย', 'ENH EMO SOC DEV CH', 2),
 ('2717342', 'PROMOTING CHILDREN DEVELOPMENT AT THE KINDERGARTEN', 'การส่งเสริมพัฒนาการสำหรับเด็กระดับอนุบาลศึกษาและระ', 'PROM DEV K/ER EL', 2),
 ('2717411', 'EDUCATION FOR PARENTS OF YOUNG CHILDREN', 'การศึกษาสำหรับผู้ปกครองเด็กปฐมวัย', 'ED PARENT CH', 3),
-('2717412', 'EARLY CHILDHOOD TEACHER\'S TASKS', 'งานครูในระดับปฐมวัย', 'EC TCHR TASK', 3),
+('2717412', 'EARLY CHILDHOOD TEACHER''S TASKS', 'งานครูในระดับปฐมวัย', 'EC TCHR TASK', 3),
 ('2717413', 'ISSUES AND TRENDS IN EARLY CHILDHOOD EDUCATION', 'ประเด็นและแนวโน้มทางการศึกษาปฐมวัย', 'ISS TRND ECE', 2),
 ('2718348', 'CAREER PROJECT DEVELOPMENT IN COMMUNITY NETWORK FO', 'การพัฒนาโครงงานอาชีพแบบเครือข่ายชุมชนสำหรับเด็ก', 'CAREER PRJ COM NET', 2),
 ('2718360', 'OCCUPATION WORK ACTIVITIES FOR ELEMENTARY SCHOOL T', 'กิจกรรมพื้นฐานการงานอาชีพสำหรับครูประถมศึกษา', 'OCCUP ACT EL TCHR', 2),
@@ -2118,12 +2137,12 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('2723325', 'HEALTH BUSINESS MANAGEMENT IN EDUCATIONAL INSTITUT', 'การจัดธุรกิจสุขภาพในสถานศึกษาและชุมชน', 'HEALTH BUS MGT ED', 2),
 ('2723330', 'DEATH EDUCATION', 'มรณศึกษา', 'DEATH EDUCATION', 2),
 ('2723352', 'SCHOOL HEALTH SERVICE', 'บริการสุขภาพในโรงเรียน', 'SCH HEALTH SERVICE', 2),
-('2723355', 'SCHOOL HEALTH PROGRAM', 'โปรแกรมสุขภาพในโรงเรียน', 'SCH HEALTH PROGRAM', 2),
+('2723355', 'SCHOOL HEALTH PROGRAM', 'โปรแกรมสุขภาพในโรงเรียน', 'SCH HEALTH PROGRAM', 2);
+INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
 ('2723357', 'COMMUNICATION IN HEALTH EDUCATION', 'การสื่อสารทางสุขศึกษา', 'COMM HLTH ED', 2),
 ('2723358', 'METHODOLOGY OF TEACHING HEALTH EDUCATION', 'วิธีวิทยาการสอนสุขศึกษา', 'METH TCHG HLTH ED', 3),
 ('2723360', 'PHYSICAL EDUCATION FOR ELEMENTARY SCHOOL TEACHERS', 'พลศึกษาสำหรับครูประถมศึกษา', 'PHYS ED ELEM TCHR', 2),
-('2723361', 'HEALTH EDUCATION FOR ELEMENTARY SCHOOL TEACHERS', 'สุขศึกษาสำหรับครูประถมศึกษา', 'HLTH ED ELEM TCHR', 2);
-INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
+('2723361', 'HEALTH EDUCATION FOR ELEMENTARY SCHOOL TEACHERS', 'สุขศึกษาสำหรับครูประถมศึกษา', 'HLTH ED ELEM TCHR', 2),
 ('2723406', 'ADAPTED PHYSICAL EDUCATION', 'บรรดิการทางพลศึกษา', 'ADAPTED PHYS ED', 2),
 ('2723408', 'PRINCIPLES OF OFFICIATING RACQUET SPORTS', 'หลักการจัดและการตัดสินกีฬาประเภทแร็กเก็ต', 'PRIN OFF RAC SP', 2),
 ('2723410', 'WATER SAFETY FOR INSTRUCTORS', 'การสอนความปลอดภัยทางน้ำสำหรับครูผู้สอน', 'WATER SAFE INST', 1),
@@ -2457,7 +2476,8 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('3000281', 'HUMAN LIFE', 'ชีวิตมนุษย์', 'HUMAN LIFE', 1),
 ('3000360', 'PRINCIPLE OF PREVENTIVE MEDICINE', 'หลักเวชศาสตร์ป้องกัน', 'PRINC PREV MED', 1),
 ('3000362', 'EPIDEMIOLOGY AND BIOSTATISTICS', 'ระบาดวิทยาและชีวสถิติ', 'EPID/BIOSTAT', 2),
-('3000364', 'PRINCIPLE OF IMMUNOLOGY', 'หลักภูมิคุ้มกันวิทยา', 'PRINC IMMU', 2),
+('3000364', 'PRINCIPLE OF IMMUNOLOGY', 'หลักภูมิคุ้มกันวิทยา', 'PRINC IMMU', 2);
+INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
 ('3000366', 'PRINCIPLE OF MEDICAL MICROBIOLOGY AND PARASITOLOGY', 'หลักจุลชีววิทยาและปรสิตวิทยาทางการแพทย์', 'MICRO/PARASITO', 2),
 ('3000368', 'PRINCIPLE OF PATHOLOGY', 'หลักพยาธิวิทยา', 'PRINC PATHO', 1),
 ('3000370', 'PRINCIPLE OF PHARMACOLOGY', 'หลักเภสัชวิทยา', 'PRINC PHARMACO', 2),
@@ -2645,8 +2665,7 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('3109702', 'SEMINAR IN VETERINARY PUBLIC HEALTH', 'สัมมนาสัตวแพทยสาธารณสุข', 'SEMINAR VPH', 1),
 ('3109703', 'LAWS AND REGULATIONS RELATED TO VETERINARY PUBLIC ', 'กฏหมายและข้อบังคับทางสัตวแพทยสาธารณสุข', 'LAWS REGUL VPH', 2),
 ('3109707', 'FOOD TOXICOLOGY', 'พิษวิทยาทางอาหาร', 'FOOD TOXICOLOGY', 2),
-('3109715', 'SPECIAL TOPICS IN VETERINARY PUBLIC HEALTH', 'เรื่องพิเศษทางสัตวแพทยสาธารณสุข', 'SPECIAL TOPIC VPH', 3);
-INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
+('3109715', 'SPECIAL TOPICS IN VETERINARY PUBLIC HEALTH', 'เรื่องพิเศษทางสัตวแพทยสาธารณสุข', 'SPECIAL TOPIC VPH', 3),
 ('3109717', 'MOLECULAR EPIDEMIOLOGY IN VETERINARY SCIENCE', 'ระบาดวิทยาระดับโมเลกุลทางการสัตวแพทย์', 'MOL EPID VET SCI', 3),
 ('3109719', 'MOLECULAR BIOLOGY OF DRUG RESISTANCE IN VETERINARY', 'อณูชีววิทยาการดื้อยาทางการสัตวแพทย์', 'MOL DRUG RES', 3),
 ('3109722', 'BIOINFORMATICS IN VETERINARY SCIENCES', 'ชีวสารสนเทศทางสัตวแพทยศาสตร์', 'BIOINFO VET SCI', 2),
@@ -2796,7 +2815,8 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('3200503', 'DENTAL RESEARCH METHODOLOGY', 'วิธีวิทยาการวิจัยทางทันตกรรม', 'DENT RES METH', 1),
 ('3200504', 'BIOSTATISTICS', 'ชีวสถิติ', 'BIOSTATISTICS', 2),
 ('3200505', 'ADVANCED ENDODONTICS AND TRAUMATIC INJURIES', 'วิทยาเอ็นโดดอนต์ชั้นสูงและภยันตราย', 'ADV ENDO/TRAU INJ', 1),
-('3200506', 'GERIATRIC DENTISTRY', 'ทันตกรรมในผู้สูงอายุ', 'GERIATRIC DENT', 1),
+('3200506', 'GERIATRIC DENTISTRY', 'ทันตกรรมในผู้สูงอายุ', 'GERIATRIC DENT', 1);
+INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
 ('3200507', 'MULTIDISCIPLINARY APPROACH TO CRANIOFACIAL COMPLEX', 'แนวทางสหสาขาในการจัดการความผิดปกติของกะโหลกศีรษะแล', 'APP CRANIO DIS', 1),
 ('3200603', 'DENTAL CLINICAL EXPERIENCE I', 'ประสบการณ์ทางคลินิกทันตกรรม 1', 'DENT CLIN EXP I', 1),
 ('3201222', 'BASIC STRUCTURE AND FUNCTION OF HEAD,NECK AND ORAL', 'โครงสร้างพื้นฐานและหน้าที่ของศีรษะ คอ และช่องปาก', 'BSC HEAD NECK', 2),
@@ -3177,7 +3197,8 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('3504318', 'RESEARCH IN DANCE I', 'การวิจัยนาฏยศิลป์ 1', 'RSRCH DANCE I', 3),
 ('3504342', 'THAI DANCE SKILL FOR MALE CHARACTER V', 'ทักษะนาฏยศิลป์ไทยตัวพระ 5', 'TH DAN SKI ML V', 3),
 ('3504344', 'THAI DANCE SKILL FOR MALE CHARACTER VI', 'ทักษะนาฏยศิลป์ไทยตัวพระ 6', 'TH DAN SKI ML VI', 3),
-('3504360', 'INDIAN DANCE', 'นาฏยศิลป์อินเดีย', 'INDIAN DANCE', 3),
+('3504360', 'INDIAN DANCE', 'นาฏยศิลป์อินเดีย', 'INDIAN DANCE', 3);
+INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
 ('3504361', 'INDONESIAN DANCE', 'นาฏยศิลป์อินโดนีเซีย', 'INDONESIAN DANCE', 3),
 ('3504373', 'SOUTHERN DANCE', 'นาฏยศิลป์ทักษิณ', 'SOUTHERN DANCE', 3),
 ('3504417', 'PROFESSIONAL PRACTICE IN DANCE', 'การฝึกวิชาชีพนาฏยศิลป์', 'PROF PRAC DANCE', 3),
@@ -3198,8 +3219,7 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('3641201', 'EMERGENCY NURSING', 'การพยาบาลฉุกเฉิน', 'EMERGENCY NURSING', 2),
 ('3642720', 'ADVANCED PSYCHIATRIC MENTAL HEALTH NURSING FOR ADU', 'การพยาบาลจิตเวชและสุขภาพจิตขั้นสูงสำหรับผู้ใหญ่และ', 'ADV PSYCH NUR A/E', 2),
 ('3642721', 'PRACTICUM IN ADVANCED PSYCHIATRIC MENTAL HEALTH NU', 'ปฏิบัติการพยาบาลจิตเวชและสุขภาพจิตขั้นสูง', 'PRAC ADV PSYCH NUR', 3),
-('3646614', 'NURSING LEADERSHIP DEVELOPMENT', 'การพัฒนาภาวะผู้นำทางการพยาบาล', 'NUR LEAD DEV', 2);
-INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
+('3646614', 'NURSING LEADERSHIP DEVELOPMENT', 'การพัฒนาภาวะผู้นำทางการพยาบาล', 'NUR LEAD DEV', 2),
 ('3646619', 'INTERNATIONAL NURSING ADMINISTRATION', 'การบริหารการพยาบาลนานาชาติ', 'INT NUR ADM', 2),
 ('3646624', 'FIELD STUDY IN NURSING ADMINISTRATION', 'การฝึกงานการบริหารการพยาบาล', 'FLD STUD NUR ADM', 3),
 ('3646710', 'SEMINAR IN NURSING ADMINISTRATION', 'สัมมนาการบริหารการพยาบาล', 'SEMINAR NUR ADM', 2),
@@ -3522,7 +3542,8 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 ('3905407', 'MATCH ANALYSIS AND SCOUNTING', 'การวิเคราะห์การแข่งขันและการสอดแนม', 'MATCH ANAL/SCTG', 2),
 ('3906101', 'RECREATION CAMP', 'ค่ายพักแรมนันทนาการ', 'RECREATION CAMP', 2),
 ('3906102', 'INTRO RECREATION', 'นันทนาการขั้นนำ', 'INTRO RECREATION', 2),
-('3910101', 'FUNDAMENTAL PHILOSOPHY AND KNOWLEDGE OF SPORTS AND', 'ปรัชญาพื้นฐานและความรู้ทางวิทยาศาสตร์การกีฬาและการ', 'FUND P/K SES', 3),
+('3910101', 'FUNDAMENTAL PHILOSOPHY AND KNOWLEDGE OF SPORTS AND', 'ปรัชญาพื้นฐานและความรู้ทางวิทยาศาสตร์การกีฬาและการ', 'FUND P/K SES', 3);
+INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_abbrev`, `credit`) VALUES
 ('3910102', 'HUMAN ANATOMY AND PHYSIOLOGY', 'กายวิภาคศาสตร์และสรีรวิทยาของมนุษย์', 'HUM ANAT PHYSIO', 3),
 ('3910103', 'PROFESSIONAL ETICS AND LEADERSHIP IN SPORTS AND EX', 'จรรยาบรรณและการเป็นผู้นำวิชาชีพวิทยาศาสคร์การกีฬาแ', 'PROF ETH/LDRP SES', 2),
 ('3910109', 'EXERCISE PHYSIOLOGY', 'สรีรวิทยาการออกกำลังกาย', 'EX PHYSIO', 3),
@@ -3673,13 +3694,14 @@ INSERT INTO `course` (`course_id`, `course_name_en`, `course_name_th`, `course_a
 -- Table structure for table `course_section`
 --
 
-CREATE TABLE `course_section` (
+CREATE TABLE IF NOT EXISTS `course_section` (
   `course_id` varchar(7) NOT NULL,
-  `course_year` int(4) UNSIGNED NOT NULL,
-  `course_semester` int(1) UNSIGNED NOT NULL,
-  `course_section` int(2) UNSIGNED NOT NULL,
-  `capacity` int(4) UNSIGNED DEFAULT NULL,
-  `student_count` int(4) UNSIGNED DEFAULT NULL
+  `course_year` int(4) unsigned NOT NULL,
+  `course_semester` int(1) unsigned NOT NULL,
+  `course_section` int(2) unsigned NOT NULL,
+  `capacity` int(4) unsigned DEFAULT NULL,
+  `student_count` int(4) unsigned DEFAULT NULL,
+  PRIMARY KEY (`course_id`,`course_year`,`course_semester`,`course_section`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -3790,13 +3812,17 @@ INSERT INTO `course_section` (`course_id`, `course_year`, `course_semester`, `co
 -- Table structure for table `course_sem`
 --
 
-CREATE TABLE `course_sem` (
+CREATE TABLE IF NOT EXISTS `course_sem` (
   `course_id` varchar(7) NOT NULL,
-  `course_year` int(4) UNSIGNED NOT NULL,
-  `course_semester` int(1) UNSIGNED NOT NULL,
+  `course_year` int(4) unsigned NOT NULL,
+  `course_semester` int(1) unsigned NOT NULL,
   `leader` varchar(30) DEFAULT NULL,
   `midterm_exam` varchar(50) DEFAULT NULL,
-  `final_exam` varchar(50) DEFAULT NULL
+  `final_exam` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`course_id`,`course_year`,`course_semester`),
+  KEY `course_sem_fk2` (`leader`),
+  KEY `course_sem_fk3` (`midterm_exam`),
+  KEY `course_sem_fk4` (`final_exam`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -3928,92 +3954,93 @@ INSERT INTO `course_sem` (`course_id`, `course_year`, `course_semester`, `leader
 -- Table structure for table `curriculum`
 --
 
-CREATE TABLE `curriculum` (
+CREATE TABLE IF NOT EXISTS `curriculum` (
   `curriculum_id` varchar(5) NOT NULL,
   `name_en` varchar(50) DEFAULT NULL,
   `name_th` varchar(50) DEFAULT NULL,
-  `start_year` int(4) UNSIGNED DEFAULT NULL,
+  `start_year` int(4) unsigned DEFAULT NULL,
   `faculty` char(2) DEFAULT NULL,
-  `fee` decimal(10,0) UNSIGNED DEFAULT NULL
+  PRIMARY KEY (`curriculum_id`),
+  KEY `cuuriculum_fk` (`faculty`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `curriculum`
 --
 
-INSERT INTO `curriculum` (`curriculum_id`, `name_en`, `name_th`, `start_year`, `faculty`, `fee`) VALUES
-('20041', 'Environmental Science', 'วิทยาศาสตร์สิ่งแวดล้อม', 0, '20', '200410'),
-('20090', 'Environmental Management', 'การจัดการสิ่งแวดล้อม', 0, '20', '200900'),
-('20100', 'English as an International Language', 'ภาษาอังกฤษเป็นภาษานานาชาติ', 0, '20', '201000'),
-('20110', 'Biomedical Sciences', 'ชีวเวชศาสตร์', 0, '20', '201100'),
-('20220', 'Technopreneurship and Innovation Management', 'ธุรกิจเทคโนโลยีและการจัดการนวัตกรรม', 0, '20', '202200'),
-('20230', 'Environment, Development and Sustainability', 'สิ่งแวดล้อม การพัฒนา และความยั่งยืน', 0, '20', '202300'),
-('21000', 'General Engineering', 'วิศวกรรมทั่วไป', 0, '21', '210000'),
-('21010', 'Civil Engineering', 'วิศวกรรมโยธา', 0, '21', '210100'),
-('21020', 'Electrical Engineering', 'วิศวกรรมไฟฟ้า', 0, '21', '210200'),
-('21030', 'Mechanical Engineering', 'วิศวกรรมเครื่องกล', 0, '21', '210300'),
-('21050', 'Chemical Engineering', 'วิศวกรรมเคมี', 0, '21', '210500'),
-('21063', 'Georesources Engineering', 'วิศวกรรมทรัพยากรธรณี', 0, '21', '210630'),
-('21091', 'Metallurgical and Materials Engineering', 'วิศวกรรมโลหการและวัสดุ', 0, '21', '210910'),
-('21100', 'Computer Engineering', 'วิศวกรรมคอมพิวเตอร์', 0, '21', '211000'),
-('21101', 'Computer Engineering', 'วิศวกรรมคอมพิวเตอร์', 2010, '21', '211010'),
-('22010', 'Thai', 'ภาษาไทย', 0, '22', '220100'),
-('22070', 'Philosophy', 'ปรัชญา', 0, '22', '220700'),
-('22090', 'Linguistics', 'ภาษาศาสตร์', 0, '22', '220900'),
-('23001', 'Biological Sciences', 'วิทยาศาสตร์ชีวภาพ', 0, '23', '230010'),
-('23002', 'Petrochemistry', 'ปิโตรเคมี', 0, '23', '230020'),
-('23003', 'Biotechnology', 'เทคโนโลยีชีวภาพ', 0, '23', '230030'),
-('23010', 'Mathematics', 'คณิตศาสตร์', 0, '23', '230100'),
-('23020', 'Chemistry', 'เคมี', 0, '23', '230200'),
-('23031', 'Zoology', 'สัตววิทยา', 0, '23', '230310'),
-('23050', 'Botany', 'พฤกษศาสตร์', 0, '23', '230500'),
-('23081', 'Environmental Science', 'วิทยาศาสตร์สิ่งแวดล้อม', 0, '23', '230810'),
-('23120', 'Microbiology', 'จุลชีววิทยา', 0, '23', '231200'),
-('24001', 'Political Science', 'รัฐศาสตร์', 0, '24', '240010'),
-('25011', 'Architecture', 'สถาปัตยกรรม', 0, '25', '250110'),
-('25013', 'Thai Architecture', 'สถาปัตยกรรมไทย', 0, '25', '250130'),
-('25020', 'Industrial Design', 'การออกแบบอุตสาหกรรม', 0, '25', '250200'),
-('25030', 'Urban and Regional Planning', 'การวางแผนภาคและเมือง', 0, '25', '250300'),
-('26001', 'Business Administration', 'บริหารธุรกิจ', 0, '26', '260010'),
-('26002', 'Information Technology in Business', 'เทคโนโลยีสารสนเทศทางธุรกิจ', 0, '26', '260020'),
-('26003', 'International Business Management', 'การจัดการธุรกิจระหว่างประเทศ', 0, '26', '260030'),
-('26010', 'Accounting', 'การบัญชี', 0, '26', '260100'),
-('26011', 'Accountancy', 'การบัญชี', 0, '26', '260110'),
-('26042', 'Quantitative Finance', 'การเงินเชิงปริมาณ', 0, '26', '260420'),
-('27158', 'Early Childhood Education', 'การศึกษาปฐมวัย', 0, '27', '271580'),
-('2715B', 'Secondary Education', 'มัธยมศึกษา', 0, '27', '27150'),
-('2715D', 'Health and Physical Education', 'สุขศึกษาและพลศึกษา', 0, '27', '27150'),
-('2715E', 'Education Technology', 'เทคโนโลยีการศึกษา', 0, '27', '27150'),
-('27351', 'Music Education', 'ดนตรีศึกษา', 0, '27', '273510'),
-('27650', 'Educational Technology and Communications', 'เทคโนโลยีและสื่อสารการศึกษา', 0, '27', '276500'),
-('28001', 'Communication Arts', 'นิเทศศาสตร์', 0, '28', '280010'),
-('28042', 'Performing Arts', 'สื่อสารการแสดง', 0, '28', '280420'),
-('29001', 'Economics', 'เศรษฐศาสตร์', 0, '29', '290010'),
-('29510', 'Political Economy', 'เศรษฐศาสตร์การเมือง', 0, '29', '295100'),
-('29520', 'Economics', 'เศรษฐศาสตร์', 0, '29', '295200'),
-('30001', 'Medical Science', 'วิทยาศาสตร์การแพทย์', 0, '30', '300010'),
-('30004', 'Medicine', 'แพทยศาสตร์', 0, '30', '300040'),
-('30143', 'Health Research and Management', 'การวิจัยและการจัดการด้านสุขภาพ', 0, '30', '301430'),
-('31001', 'Veterinary Science', 'สัตวแพทยศาสตร์', 0, '31', '310010'),
-('31051', 'Veterinary Pathobiology', 'พยาธิชีววิทยาทางสัตวแพทย์', 0, '31', '310510'),
-('31073', 'Veterinary Medicine', 'อายุรศาสตร์สัตวแพทย์', 0, '31', '310730'),
-('32002', 'Dentistry', 'ทันตแพทยศาสตร์', 0, '32', '320020'),
-('33001', 'Pharmaceutical Sciences', 'เภสัชศาสตร์', 0, '33', '330010'),
-('33115', 'Pharmaceutics', 'เภสัชกรรม', 0, '33', '331150'),
-('33470', 'Pharmaceutical Care', 'การบริบาลทางเภสัชกรรม', 0, '33', '334700'),
-('34001', 'Laws', 'นิติศาสตร์', 0, '34', '340010'),
-('35000', 'Common', 'ไม่สังกัดการศึกษา', 0, '35', '350000'),
-('35020', 'Creative Arts', 'นฤมิตศิลป์', 0, '35', '350200'),
-('35040', 'Dance', 'นาฏยศิลป์', 0, '35', '350400'),
-('36470', 'Nursing Science', 'พยาบาลศาสตร์', 0, '36', '364700'),
-('37001', 'Medical Technology', 'เทคนิคการแพทย์', 0, '37', '370010'),
-('37011', 'Clinical Biochemistry and Molecular Medicine', 'ชีวเคมีคลินิกและอณูทางการแพทย์', 0, '37', '370110'),
-('37040', 'Physical Therapy', 'กายภาพบำบัด', 0, '37', '370400'),
-('38001', 'Psychology', 'จิตวิทยา', 0, '38', '380010'),
-('38003', 'Psychological Science', 'วิทยาศาสตร์จิตวิทยา', 0, '38', '380030'),
-('39001', 'Sports Science', 'วิทยาศาสตร์การกีฬา', 0, '39', '390010'),
-('39002', 'Sports and Exercise Science', 'วิทยาศาสตร์การกีฬาและการออกกำลังกาย', 0, '39', '390020'),
-('40001', 'Agricultural Resources Administration', 'การบริหารจัดการทรัพยากรการเกษตร', 0, '40', '400010');
+INSERT INTO `curriculum` (`curriculum_id`, `name_en`, `name_th`, `start_year`, `faculty`) VALUES
+('20041', 'Environmental Science', 'วิทยาศาสตร์สิ่งแวดล้อม', 0, '20'),
+('20090', 'Environmental Management', 'การจัดการสิ่งแวดล้อม', 0, '20'),
+('20100', 'English as an International Language', 'ภาษาอังกฤษเป็นภาษานานาชาติ', 0, '20'),
+('20110', 'Biomedical Sciences', 'ชีวเวชศาสตร์', 0, '20'),
+('20220', 'Technopreneurship and Innovation Management', 'ธุรกิจเทคโนโลยีและการจัดการนวัตกรรม', 0, '20'),
+('20230', 'Environment, Development and Sustainability', 'สิ่งแวดล้อม การพัฒนา และความยั่งยืน', 0, '20'),
+('21000', 'General Engineering', 'วิศวกรรมทั่วไป', 0, '21'),
+('21010', 'Civil Engineering', 'วิศวกรรมโยธา', 0, '21'),
+('21020', 'Electrical Engineering', 'วิศวกรรมไฟฟ้า', 0, '21'),
+('21030', 'Mechanical Engineering', 'วิศวกรรมเครื่องกล', 0, '21'),
+('21050', 'Chemical Engineering', 'วิศวกรรมเคมี', 0, '21'),
+('21063', 'Georesources Engineering', 'วิศวกรรมทรัพยากรธรณี', 0, '21'),
+('21091', 'Metallurgical and Materials Engineering', 'วิศวกรรมโลหการและวัสดุ', 0, '21'),
+('21100', 'Computer Engineering', 'วิศวกรรมคอมพิวเตอร์', 0, '21'),
+('21101', 'Computer Engineering', 'วิศวกรรมคอมพิวเตอร์', 2010, '21'),
+('22010', 'Thai', 'ภาษาไทย', 0, '22'),
+('22070', 'Philosophy', 'ปรัชญา', 0, '22'),
+('22090', 'Linguistics', 'ภาษาศาสตร์', 0, '22'),
+('23001', 'Biological Sciences', 'วิทยาศาสตร์ชีวภาพ', 0, '23'),
+('23002', 'Petrochemistry', 'ปิโตรเคมี', 0, '23'),
+('23003', 'Biotechnology', 'เทคโนโลยีชีวภาพ', 0, '23'),
+('23010', 'Mathematics', 'คณิตศาสตร์', 0, '23'),
+('23020', 'Chemistry', 'เคมี', 0, '23'),
+('23031', 'Zoology', 'สัตววิทยา', 0, '23'),
+('23050', 'Botany', 'พฤกษศาสตร์', 0, '23'),
+('23081', 'Environmental Science', 'วิทยาศาสตร์สิ่งแวดล้อม', 0, '23'),
+('23120', 'Microbiology', 'จุลชีววิทยา', 0, '23'),
+('24001', 'Political Science', 'รัฐศาสตร์', 0, '24'),
+('25011', 'Architecture', 'สถาปัตยกรรม', 0, '25'),
+('25013', 'Thai Architecture', 'สถาปัตยกรรมไทย', 0, '25'),
+('25020', 'Industrial Design', 'การออกแบบอุตสาหกรรม', 0, '25'),
+('25030', 'Urban and Regional Planning', 'การวางแผนภาคและเมือง', 0, '25'),
+('26001', 'Business Administration', 'บริหารธุรกิจ', 0, '26'),
+('26002', 'Information Technology in Business', 'เทคโนโลยีสารสนเทศทางธุรกิจ', 0, '26'),
+('26003', 'International Business Management', 'การจัดการธุรกิจระหว่างประเทศ', 0, '26'),
+('26010', 'Accounting', 'การบัญชี', 0, '26'),
+('26011', 'Accountancy', 'การบัญชี', 0, '26'),
+('26042', 'Quantitative Finance', 'การเงินเชิงปริมาณ', 0, '26'),
+('27158', 'Early Childhood Education', 'การศึกษาปฐมวัย', 0, '27'),
+('2715B', 'Secondary Education', 'มัธยมศึกษา', 0, '27'),
+('2715D', 'Health and Physical Education', 'สุขศึกษาและพลศึกษา', 0, '27'),
+('2715E', 'Education Technology', 'เทคโนโลยีการศึกษา', 0, '27'),
+('27351', 'Music Education', 'ดนตรีศึกษา', 0, '27'),
+('27650', 'Educational Technology and Communications', 'เทคโนโลยีและสื่อสารการศึกษา', 0, '27'),
+('28001', 'Communication Arts', 'นิเทศศาสตร์', 0, '28'),
+('28042', 'Performing Arts', 'สื่อสารการแสดง', 0, '28'),
+('29001', 'Economics', 'เศรษฐศาสตร์', 0, '29'),
+('29510', 'Political Economy', 'เศรษฐศาสตร์การเมือง', 0, '29'),
+('29520', 'Economics', 'เศรษฐศาสตร์', 0, '29'),
+('30001', 'Medical Science', 'วิทยาศาสตร์การแพทย์', 0, '30'),
+('30004', 'Medicine', 'แพทยศาสตร์', 0, '30'),
+('30143', 'Health Research and Management', 'การวิจัยและการจัดการด้านสุขภาพ', 0, '30'),
+('31001', 'Veterinary Science', 'สัตวแพทยศาสตร์', 0, '31'),
+('31051', 'Veterinary Pathobiology', 'พยาธิชีววิทยาทางสัตวแพทย์', 0, '31'),
+('31073', 'Veterinary Medicine', 'อายุรศาสตร์สัตวแพทย์', 0, '31'),
+('32002', 'Dentistry', 'ทันตแพทยศาสตร์', 0, '32'),
+('33001', 'Pharmaceutical Sciences', 'เภสัชศาสตร์', 0, '33'),
+('33115', 'Pharmaceutics', 'เภสัชกรรม', 0, '33'),
+('33470', 'Pharmaceutical Care', 'การบริบาลทางเภสัชกรรม', 0, '33'),
+('34001', 'Laws', 'นิติศาสตร์', 0, '34'),
+('35000', 'Common', 'ไม่สังกัดการศึกษา', 0, '35'),
+('35020', 'Creative Arts', 'นฤมิตศิลป์', 0, '35'),
+('35040', 'Dance', 'นาฏยศิลป์', 0, '35'),
+('36470', 'Nursing Science', 'พยาบาลศาสตร์', 0, '36'),
+('37001', 'Medical Technology', 'เทคนิคการแพทย์', 0, '37'),
+('37011', 'Clinical Biochemistry and Molecular Medicine', 'ชีวเคมีคลินิกและอณูทางการแพทย์', 0, '37'),
+('37040', 'Physical Therapy', 'กายภาพบำบัด', 0, '37'),
+('38001', 'Psychology', 'จิตวิทยา', 0, '38'),
+('38003', 'Psychological Science', 'วิทยาศาสตร์จิตวิทยา', 0, '38'),
+('39001', 'Sports Science', 'วิทยาศาสตร์การกีฬา', 0, '39'),
+('39002', 'Sports and Exercise Science', 'วิทยาศาสตร์การกีฬาและการออกกำลังกาย', 0, '39'),
+('40001', 'Agricultural Resources Administration', 'การบริหารจัดการทรัพยากรการเกษตร', 0, '40');
 
 -- --------------------------------------------------------
 
@@ -4021,11 +4048,13 @@ INSERT INTO `curriculum` (`curriculum_id`, `name_en`, `name_th`, `start_year`, `
 -- Table structure for table `department`
 --
 
-CREATE TABLE `department` (
+CREATE TABLE IF NOT EXISTS `department` (
   `department_id` char(4) NOT NULL,
   `name_en` varchar(50) DEFAULT NULL,
   `name_th` varchar(50) DEFAULT NULL,
-  `faculty` char(2) DEFAULT NULL
+  `faculty` char(2) DEFAULT NULL,
+  PRIMARY KEY (`department_id`),
+  KEY `department_fk` (`faculty`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4099,49 +4128,56 @@ INSERT INTO `department` (`department_id`, `name_en`, `name_th`, `faculty`) VALU
 -- Table structure for table `enrollment`
 --
 
-CREATE TABLE `enrollment` (
+CREATE TABLE IF NOT EXISTS `enrollment` (
   `student_id` varchar(11) NOT NULL,
   `course_id` varchar(7) NOT NULL,
-  `course_year` int(4) UNSIGNED NOT NULL,
-  `course_semester` int(1) UNSIGNED NOT NULL,
-  `course_section` int(2) UNSIGNED NOT NULL,
-  `last_news_visit` datetime NOT NULL
+  `course_year` int(4) unsigned NOT NULL,
+  `course_semester` int(1) unsigned NOT NULL,
+  `course_section` int(2) unsigned NOT NULL,
+  PRIMARY KEY (`student_id`,`course_id`,`course_year`,`course_semester`,`course_section`),
+  KEY `enrollment_fk2` (`course_id`,`course_year`,`course_semester`,`course_section`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `enrollment`
 --
 
-INSERT INTO `enrollment` (`student_id`, `course_id`, `course_year`, `course_semester`, `course_section`, `last_news_visit`) VALUES
-('508888021', '2109101', 2017, 2, 2, '2018-05-19 18:59:54'),
-('508888021', '2110201', 2017, 2, 1, '2018-05-18 17:59:21'),
-('530101321', '2109101', 2017, 2, 3, '0000-00-00 00:00:00');
+INSERT INTO `enrollment` (`student_id`, `course_id`, `course_year`, `course_semester`, `course_section`) VALUES
+('508888021', '2109101', 2017, 2, 2),
+('530101321', '2109101', 2017, 2, 3),
+('508888021', '2110201', 2017, 2, 1);
 
 --
 -- Triggers `enrollment`
 --
-DELIMITER $$
-CREATE TRIGGER `add_course_derive_student_count` AFTER INSERT ON `enrollment` FOR EACH ROW BEGIN
+DROP TRIGGER IF EXISTS `add_course_derive_student_count`;
+DELIMITER //
+CREATE TRIGGER `add_course_derive_student_count` AFTER INSERT ON `enrollment`
+ FOR EACH ROW BEGIN
 	UPDATE course_section
 	SET student_count = student_count + 1
 	WHERE NEW.course_id = course_id AND NEW.course_year = course_year
 		AND NEW.course_semester = course_semester
 		AND NEW.course_section = course_section;
 END
-$$
+//
 DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `remove_course_derive_student_count` AFTER DELETE ON `enrollment` FOR EACH ROW BEGIN
+DROP TRIGGER IF EXISTS `remove_course_derive_student_count`;
+DELIMITER //
+CREATE TRIGGER `remove_course_derive_student_count` AFTER DELETE ON `enrollment`
+ FOR EACH ROW BEGIN
 	UPDATE course_section
 	SET student_count = student_count-1
 	WHERE OLD.course_id = course_id AND OLD.course_year = course_year 
 		AND OLD.course_semester = course_semester
 		AND OLD.course_section = course_section;
 END
-$$
+//
 DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `update_course_derive_student_count` BEFORE UPDATE ON `enrollment` FOR EACH ROW BEGIN
+DROP TRIGGER IF EXISTS `update_course_derive_student_count`;
+DELIMITER //
+CREATE TRIGGER `update_course_derive_student_count` BEFORE UPDATE ON `enrollment`
+ FOR EACH ROW BEGIN
 	UPDATE course_section
 	SET student_count = student_count + 1
 	WHERE NEW.course_id = course_id AND NEW.course_year = course_year
@@ -4154,7 +4190,7 @@ CREATE TRIGGER `update_course_derive_student_count` BEFORE UPDATE ON `enrollment
 		AND OLD.course_semester = course_semester
 		AND OLD.course_section = course_section;
 END
-$$
+//
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -4163,8 +4199,9 @@ DELIMITER ;
 -- Table structure for table `exam`
 --
 
-CREATE TABLE `exam` (
-  `exam_name` varchar(50) NOT NULL
+CREATE TABLE IF NOT EXISTS `exam` (
+  `exam_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`exam_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4187,13 +4224,15 @@ INSERT INTO `exam` (`exam_name`) VALUES
 -- Table structure for table `exam_arrangement`
 --
 
-CREATE TABLE `exam_arrangement` (
+CREATE TABLE IF NOT EXISTS `exam_arrangement` (
   `room_no` varchar(10) NOT NULL,
   `building_id` char(4) NOT NULL,
   `exam_name` varchar(50) NOT NULL,
   `exam_date` date NOT NULL,
   `start_time` time NOT NULL,
-  `finish_time` time NOT NULL
+  `finish_time` time NOT NULL,
+  PRIMARY KEY (`room_no`,`building_id`,`exam_name`,`exam_date`,`start_time`),
+  KEY `exam_fk1` (`exam_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4217,11 +4256,12 @@ INSERT INTO `exam_arrangement` (`room_no`, `building_id`, `exam_name`, `exam_dat
 -- Table structure for table `faculty`
 --
 
-CREATE TABLE `faculty` (
+CREATE TABLE IF NOT EXISTS `faculty` (
   `faculty_code` char(2) NOT NULL,
   `name_en` varchar(50) DEFAULT NULL,
   `name_th` varchar(50) DEFAULT NULL,
-  `name_abbrev` varchar(15) DEFAULT NULL
+  `name_abbrev` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`faculty_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4288,9 +4328,11 @@ INSERT INTO `faculty` (`faculty_code`, `name_en`, `name_th`, `name_abbrev`) VALU
 -- Table structure for table `lesson_plan`
 --
 
-CREATE TABLE `lesson_plan` (
+CREATE TABLE IF NOT EXISTS `lesson_plan` (
   `curriculum_id` varchar(5) NOT NULL,
-  `course_id` varchar(7) NOT NULL
+  `course_id` varchar(7) NOT NULL,
+  PRIMARY KEY (`curriculum_id`,`course_id`),
+  KEY `lesson_plan_fk1` (`course_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4299,42 +4341,29 @@ CREATE TABLE `lesson_plan` (
 
 INSERT INTO `lesson_plan` (`curriculum_id`, `course_id`) VALUES
 ('21100', '2100111'),
+('21101', '2100111'),
 ('21100', '2100301'),
+('21101', '2100301'),
 ('21100', '2103106'),
+('21101', '2103106'),
 ('21100', '2109101'),
 ('21100', '2110101'),
-('21100', '2110211'),
-('21100', '2110215'),
-('21100', '2110263'),
-('21100', '2110327'),
-('21100', '2301107'),
-('21100', '2301108'),
-('21100', '2302127'),
-('21100', '2302163'),
-('21100', '2304103'),
-('21100', '2304104'),
-('21100', '2304183'),
-('21100', '2304184'),
-('21100', '2603284'),
-('21100', '5500111'),
-('21100', '5500112'),
-('21100', '5500208'),
-('21100', '5500308'),
-('21101', '2100111'),
-('21101', '2100301'),
-('21101', '2103106'),
 ('21101', '2110101'),
 ('21101', '2110200'),
 ('21101', '2110201'),
+('21100', '2110211'),
 ('21101', '2110211'),
+('21100', '2110215'),
 ('21101', '2110215'),
 ('21101', '2110221'),
 ('21101', '2110251'),
 ('21101', '2110253'),
+('21100', '2110263'),
 ('21101', '2110263'),
 ('21101', '2110313'),
 ('21101', '2110316'),
 ('21101', '2110318'),
+('21100', '2110327'),
 ('21101', '2110327'),
 ('21101', '2110332'),
 ('21101', '2110352'),
@@ -4345,14 +4374,27 @@ INSERT INTO `lesson_plan` (`curriculum_id`, `course_id`) VALUES
 ('21101', '2110471'),
 ('21101', '2110490'),
 ('21101', '2110499'),
+('21100', '2301107'),
 ('21101', '2301107'),
+('21100', '2301108'),
 ('21101', '2301108'),
+('21100', '2302127'),
+('21100', '2302163'),
+('21100', '2304103'),
+('21100', '2304104'),
 ('21101', '2304107'),
+('21100', '2304183'),
 ('21101', '2304183'),
+('21100', '2304184'),
+('21100', '2603284'),
 ('21101', '2603284'),
+('21100', '5500111'),
 ('21101', '5500111'),
+('21100', '5500112'),
 ('21101', '5500112'),
+('21100', '5500208'),
 ('21101', '5500208'),
+('21100', '5500308'),
 ('21101', '5500308');
 
 -- --------------------------------------------------------
@@ -4361,14 +4403,15 @@ INSERT INTO `lesson_plan` (`curriculum_id`, `course_id`) VALUES
 -- Table structure for table `news`
 --
 
-CREATE TABLE `news` (
+CREATE TABLE IF NOT EXISTS `news` (
   `course_id` varchar(7) NOT NULL,
-  `course_year` int(4) UNSIGNED NOT NULL,
-  `course_semester` int(1) UNSIGNED NOT NULL,
-  `course_section` int(2) UNSIGNED NOT NULL,
+  `course_year` int(4) unsigned NOT NULL,
+  `course_semester` int(1) unsigned NOT NULL,
+  `course_section` int(2) unsigned NOT NULL,
   `publish_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` varchar(50) DEFAULT NULL,
-  `detail` text
+  `detail` text,
+  PRIMARY KEY (`course_id`,`course_year`,`course_semester`,`course_section`,`publish_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4383,9 +4426,6 @@ INSERT INTO `news` (`course_id`, `course_year`, `course_semester`, `course_secti
 ('2109101', 2017, 2, 1, '2018-04-26 06:42:20', 'quiz 1', 'วันที่ 27 เม.ย. นะครับ ที่ห้องเรียน'),
 ('2109101', 2017, 2, 1, '2018-04-26 06:42:42', 'สถิติคะแนนกลางภาค', 'Mean = 30'),
 ('2109101', 2017, 2, 1, '2018-04-26 06:42:55', 'กำหนดส่งโปรเจค', 'ส่งภายในวันที่ 30 เม.ย. นะครับ'),
-('2109101', 2017, 2, 2, '2018-05-18 14:19:39', 'HW1', ''),
-('2109101', 2017, 2, 2, '2018-05-19 11:59:34', 'HW2', ''),
-('2110101', 2017, 2, 1, '2018-05-18 10:58:02', 'HW1', ''),
 ('2110101', 2017, 2, 2, '2018-04-26 02:27:46', 'test', 'aaa'),
 ('2110101', 2017, 2, 2, '2018-04-26 02:29:33', 'asdasd', 'asd'),
 ('2110201', 2017, 2, 1, '2018-03-22 07:28:02', 'การบ้าน khanacademy ครั้งที่ 1', 'ให้นิสิตตอบคำถามใน Exercise Chapter 2 เรื่อง Subspaces and basis for a subspace ใน khanacademy ก่อนเที่ยงคืนวันที่ 29/03/2018'),
@@ -4393,7 +4433,6 @@ INSERT INTO `news` (`course_id`, `course_year`, `course_semester`, `course_secti
 ('2110201', 2017, 2, 1, '2018-04-25 07:26:15', 'การบ้าน khanacademy ครั้งที่ 3', 'ให้นิสิตตอบคำถามใน Exercise Chapter 6 เรื่อง Eigenvalues and eigenvectors ใน khanacademy ก่อนเที่ยงคืนวันที่ 30/04/2018'),
 ('2110201', 2017, 2, 1, '2018-04-30 07:39:25', 'Final report Linear Algebra', 'ให้นิสิตเขียนรายงาน หัวข้อ Real-world Application of Linear Algebra ส่งใน mycourseville ก่อนเที่ยงคืนวันที่ 10/05/2018'),
 ('2110201', 2017, 2, 1, '2018-05-01 02:03:12', 'test', 'test'),
-('2110201', 2017, 2, 1, '2018-05-18 10:58:23', 'HW1', ''),
 ('2110471', 2017, 2, 33, '2018-03-04 08:28:02', 'Netacad chapter exam', 'ให้นิสิตทำ exam chapter 1 ถึง 10 บน cisco netacad ก่อนเที่ยงคืนวันที่ 30/04/2018'),
 ('2110471', 2017, 2, 33, '2018-03-22 07:28:02', 'การบ้าน packet tracer ครั้งที่ 1', 'ให้นิสิตทำตาม assignment 1 และตอบคำถามบน mycourseville ก่อนเที่ยงคืนวันที่ 29/03/2018'),
 ('2110471', 2017, 2, 33, '2018-04-20 07:28:02', 'Post-test lab 9 & Pre-test lab 10', 'ให้นิสิตทำ Post-test lab 9 และ Pre-test lab 10 ใน mycourseville ก่อนเที่ยงคืนวันที่ 27/04/2018'),
@@ -4405,9 +4444,11 @@ INSERT INTO `news` (`course_id`, `course_year`, `course_semester`, `course_secti
 -- Table structure for table `prerequisite`
 --
 
-CREATE TABLE `prerequisite` (
+CREATE TABLE IF NOT EXISTS `prerequisite` (
   `course` varchar(7) NOT NULL,
-  `precourse` varchar(7) NOT NULL
+  `precourse` varchar(7) NOT NULL,
+  PRIMARY KEY (`course`,`precourse`),
+  KEY `prerequisite_fk2` (`precourse`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4416,9 +4457,9 @@ CREATE TABLE `prerequisite` (
 
 INSERT INTO `prerequisite` (`course`, `precourse`) VALUES
 ('2109101', '2110101'),
-('2109101', '5500111'),
 ('2110201', '2110200'),
-('2110499', '2110490');
+('2110499', '2110490'),
+('2109101', '5500111');
 
 -- --------------------------------------------------------
 
@@ -4426,7 +4467,7 @@ INSERT INTO `prerequisite` (`course`, `precourse`) VALUES
 -- Table structure for table `professor`
 --
 
-CREATE TABLE `professor` (
+CREATE TABLE IF NOT EXISTS `professor` (
   `professor_id` varchar(30) NOT NULL,
   `fname_en` varchar(50) NOT NULL,
   `lname_en` varchar(50) NOT NULL,
@@ -4437,7 +4478,9 @@ CREATE TABLE `professor` (
   `address` varchar(100) DEFAULT NULL,
   `mobile_no` varchar(15) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
-  `department` char(4) DEFAULT NULL
+  `department` char(4) DEFAULT NULL,
+  PRIMARY KEY (`professor_id`),
+  KEY `professor_fk` (`department`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4477,13 +4520,13 @@ INSERT INTO `professor` (`professor_id`, `fname_en`, `lname_en`, `fname_th`, `ln
 ('Betty.G', 'Betty', 'Gonzalez', NULL, NULL, NULL, '1970-01-01', 'Vermont Plaza 57 SD Egypt', '0026241533', 'et@Buzzster.name', '2308'),
 ('Beverly.H', 'Beverly', 'Hughes', NULL, NULL, NULL, '1970-01-01', 'South Pass 73 TN Germany', '0869307562', 'RaymondStevens@Vitz.org', '2011'),
 ('Bonnie.C', 'Bonnie', 'Collins', NULL, NULL, NULL, '1970-01-01', 'Farmco Avenue 90 NM Mozambique', '0610560891', 'aut_quis@JumpXS.info', '2004'),
-('Bonnie.F', 'Bonnie', 'Frazier', NULL, NULL, NULL, '1970-01-01', 'Donald Trail 70 CA Cote d\'Ivoire', '0855546213', '8Mason@Roombo.gov', '2302'),
+('Bonnie.F', 'Bonnie', 'Frazier', NULL, NULL, NULL, '1970-01-01', 'Donald Trail 70 CA Cote d''Ivoire', '0855546213', '8Mason@Roombo.gov', '2302'),
 ('Bonnie.P', 'Bonnie', 'Parker', NULL, NULL, NULL, '1970-01-01', 'Di Loreto Point 80 OR Anguilla', '0720241155', 'RyanFernandez@Skalith.biz', '2022'),
 ('Bruce.S', 'Bruce', 'Shaw', NULL, NULL, NULL, '1970-01-01', 'Mockingbird Plaza 76 WI Honduras', '0058619042', 'fMcdonald@Yoveo.net', '2207'),
 ('Carl.M', 'Carl', 'Martin', NULL, NULL, NULL, '1970-01-01', 'Steensland Terrace 85 CA Vanuatu', '0409950274', 'EdwardGraham@DabZ.name', '2011'),
 ('Carl.T', 'Carl', 'Thompson', NULL, NULL, NULL, '1970-01-01', 'Meadow Vale Plaza 25 IA French Polynesia', '0962852318', 'totam_quae@Oba.gov', '2300'),
 ('Carl.W', 'Carl', 'Wagner', NULL, NULL, NULL, '1970-01-01', 'Memorial Pass 31 NE India', '0925497089', 'GaryKelly@Shufflebeat.org', '2503'),
-('Carlos.M', 'Carlos', 'Morales', NULL, NULL, NULL, '1970-01-01', 'Sheridan Center 41 KS Cote d\'Ivoire', '0565091291', 'mRamirez@Cogibox.name', '2305'),
+('Carlos.M', 'Carlos', 'Morales', NULL, NULL, NULL, '1970-01-01', 'Sheridan Center 41 KS Cote d''Ivoire', '0565091291', 'mRamirez@Cogibox.name', '2305'),
 ('Carlos.P', 'Carlos', 'Perkins', NULL, NULL, NULL, '1970-01-01', 'Garrison Place 53 NH Uganda', '0042062912', 'AnnParker@Topicstorm.net', '2601'),
 ('Carolyn.H', 'Carolyn', 'Hunt', NULL, NULL, NULL, '1970-01-01', 'Oriole Trail 35 NE Luxembourg', '0594799852', 'itaque@Flipstorm.info', '2303'),
 ('Carolyn.W', 'Carolyn', 'Wood', NULL, NULL, NULL, '1970-01-01', 'Carioca Circle 8 IN Cyprus', '0034404849', 'numquam_ut_libero@Kwinu.net', '2400'),
@@ -4686,7 +4729,7 @@ INSERT INTO `professor` (`professor_id`, `fname_en`, `lname_en`, `fname_th`, `ln
 ('Ralph.D', 'Ralph', 'Dixon', NULL, NULL, NULL, '1970-01-01', 'Badeau Parkway 39 VT Costa Rica', '0363966391', 'MaryWalker@Aibox.biz', '2600'),
 ('Randy.G', 'Randy', 'Garrett', NULL, NULL, NULL, '1970-01-01', 'Barnett Avenue 12 CT French Polynesia', '0905716038', 'GeorgeSpencer@Ooba.info', '2023'),
 ('Randy.W', 'Randy', 'Willis', NULL, NULL, NULL, '1970-01-01', 'Clyde Gallagher Lane 42 CT Kuwait', '0151321065', 'vHamilton@Divavu.name', '2209'),
-('Raymond.R', 'Raymond', 'Ryan', NULL, NULL, NULL, '1970-01-01', 'Cherokee Alley 76 OR Cote d\'Ivoire', '0309707500', 'rerum@Voomm.mil', '2600'),
+('Raymond.R', 'Raymond', 'Ryan', NULL, NULL, NULL, '1970-01-01', 'Cherokee Alley 76 OR Cote d''Ivoire', '0309707500', 'rerum@Voomm.mil', '2600'),
 ('Rebecca.F', 'Rebecca', 'Fuller', NULL, NULL, NULL, '1970-01-01', 'Luster Drive 28 GA Marshall Islands', '0965517240', '7Jackson@Browsezoom.name', '2105'),
 ('Rebecca.M', 'Rebecca', 'Murphy', NULL, NULL, NULL, '1970-01-01', 'Petterle Avenue 4 UT Burkina Faso', '0969506212', 'WilliamLawrence@Skilith.org', '2209'),
 ('Rebecca.W', 'Rebecca', 'Wells', NULL, NULL, NULL, '1970-01-01', 'Manitowish Street 5 AL Ascension Island', '0192508384', '1Garrett@Zava.edu', '2600'),
@@ -4765,8 +4808,10 @@ INSERT INTO `professor` (`professor_id`, `fname_en`, `lname_en`, `fname_th`, `ln
 --
 -- Triggers `professor`
 --
-DELIMITER $$
-CREATE TRIGGER `auto_prof_id` BEFORE INSERT ON `professor` FOR EACH ROW BEGIN
+DROP TRIGGER IF EXISTS `auto_prof_id`;
+DELIMITER //
+CREATE TRIGGER `auto_prof_id` BEFORE INSERT ON `professor`
+ FOR EACH ROW BEGIN
 	DECLARE i INT DEFAULT 0;
     DECLARE res VARCHAR(30);
 	IF NEW.professor_id = "@" THEN
@@ -4785,7 +4830,7 @@ CREATE TRIGGER `auto_prof_id` BEFORE INSERT ON `professor` FOR EACH ROW BEGIN
 		SET NEW.professor_id = res;
 	END IF;
 END
-$$
+//
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -4794,13 +4839,15 @@ DELIMITER ;
 -- Table structure for table `record`
 --
 
-CREATE TABLE `record` (
+CREATE TABLE IF NOT EXISTS `record` (
   `student_id` varchar(11) NOT NULL,
   `course_id` varchar(7) NOT NULL,
-  `course_year` int(4) UNSIGNED NOT NULL,
-  `course_semester` int(1) UNSIGNED NOT NULL,
+  `course_year` int(4) unsigned NOT NULL,
+  `course_semester` int(1) unsigned NOT NULL,
   `grade` enum('A','B+','B','C+','C','D+','D','F','W','S','U','X','I','M') DEFAULT NULL,
-  `hidden` tinyint(1) NOT NULL
+  `hidden` tinyint(1) NOT NULL,
+  PRIMARY KEY (`student_id`,`course_id`,`course_year`,`course_semester`),
+  KEY `record_fk2` (`course_id`,`course_year`,`course_semester`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -4871,8 +4918,10 @@ INSERT INTO `record` (`student_id`, `course_id`, `course_year`, `course_semester
 --
 -- Triggers `record`
 --
-DELIMITER $$
-CREATE TRIGGER `auto_calculate_grade` AFTER UPDATE ON `record` FOR EACH ROW BEGIN
+DROP TRIGGER IF EXISTS `auto_calculate_grade`;
+DELIMITER //
+CREATE TRIGGER `auto_calculate_grade` AFTER UPDATE ON `record`
+ FOR EACH ROW BEGIN
 	DECLARE _grade DOUBLE;
 	DECLARE _credit DOUBLE;
     
@@ -4905,7 +4954,7 @@ CREATE TRIGGER `auto_calculate_grade` AFTER UPDATE ON `record` FOR EACH ROW BEGI
         WHERE student_id = NEW.student_id;
 	END IF;
 END
-$$
+//
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -4914,36 +4963,32 @@ DELIMITER ;
 -- Table structure for table `request`
 --
 
-CREATE TABLE `request` (
+CREATE TABLE IF NOT EXISTS `request` (
   `student_id` varchar(10) NOT NULL,
   `request_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `form_name` varchar(30) NOT NULL,
   `details` text,
   `status` enum('Accepted','Rejected','Pending') DEFAULT NULL,
-  `response_time` datetime NOT NULL
+  PRIMARY KEY (`student_id`,`request_time`),
+  KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `request`
 --
 
-INSERT INTO `request` (`student_id`, `request_time`, `form_name`, `details`, `status`, `response_time`) VALUES
-('508888021', '2018-05-16 11:15:18', 'ถอนรายวิชา', 'ถอนดิ', 'Accepted', '0000-00-00 00:00:00'),
-('530101321', '2018-04-24 05:03:36', 'ถอนรายวิชา', 'ถอนถอนถอน', 'Accepted', '0000-00-00 00:00:00'),
-('530101321', '2018-04-24 05:50:08', 'ถอนรายวิชา', 'a', 'Accepted', '0000-00-00 00:00:00'),
-('530101321', '2018-04-24 05:50:13', 'ลงเกินหน่วยกิต', 'asdf', 'Rejected', '0000-00-00 00:00:00'),
-('530101321', '2018-04-24 05:50:17', 'อื่นๆ', 'GG', 'Accepted', '0000-00-00 00:00:00'),
-('555', '2018-04-24 05:03:04', 'ถอน', 'จีจี', 'Rejected', '0000-00-00 00:00:00'),
-('555', '2018-04-25 07:35:39', 'ลงเต็มกี่นั่ง', 'อะไรคือกี่นั่ง?', 'Accepted', '0000-00-00 00:00:00'),
-('555', '2018-04-25 07:36:28', 'อื่นๆ', 'ทดสอบ', 'Rejected', '0000-00-00 00:00:00'),
-('555', '2018-04-25 08:06:10', 'อื่น ๆ', 'ทำหน้า professor ดิ๊ ขี้เกียจแล้ว', 'Accepted', '0000-00-00 00:00:00'),
-('555', '2018-04-25 08:06:34', 'อื่น ๆ', 'ไม่อยากทำโปรเจคแล้วครับ ขอลาออกได้ไหมครับ', 'Rejected', '0000-00-00 00:00:00'),
-('555', '2018-04-28 15:15:52', 'ถอนรายวิชา', 'จะถอน com prog แฮร่', 'Rejected', '0000-00-00 00:00:00'),
-('555', '2018-05-16 09:00:04', 'ลงเกินหน่วยกิต', 'หน่วยกิตน้อยไป ยังเรียนไม่สะใจเลยครับ', 'Accepted', '0000-00-00 00:00:00'),
-('555', '2018-05-16 09:16:01', 'ถอนรายวิชา', '', 'Rejected', '0000-00-00 00:00:00'),
-('555', '2018-05-16 10:30:11', 'ถอนรายวิชา', 'นะ', 'Accepted', '0000-00-00 00:00:00'),
-('555', '2018-05-18 06:09:13', 'ถอนรายวิชา', 'ถอน', 'Accepted', '2018-05-18 13:14:03'),
-('5831001021', '2018-04-30 06:08:54', 'ขอใบรับรอง', 'ขอใบรับรองการเป็นนิสิต ภาษาอังกฤษ เพื่อนำไปยื่นขอวีซ่าประเทศออสเตรเลีย', 'Accepted', '0000-00-00 00:00:00');
+INSERT INTO `request` (`student_id`, `request_time`, `form_name`, `details`, `status`) VALUES
+('530101321', '2018-04-24 05:03:36', 'ถอนรายวิชา', 'ถอนถอนถอน', 'Accepted'),
+('530101321', '2018-04-24 05:50:08', 'ถอนรายวิชา', 'a', 'Accepted'),
+('530101321', '2018-04-24 05:50:13', 'ลงเกินหน่วยกิต', 'asdf', 'Rejected'),
+('530101321', '2018-04-24 05:50:17', 'อื่นๆ', 'GG', 'Accepted'),
+('555', '2018-04-24 05:03:04', 'ถอน', 'จีจี', 'Rejected'),
+('555', '2018-04-25 07:35:39', 'ลงเต็มกี่นั่ง', 'อะไรคือกี่นั่ง?', 'Accepted'),
+('555', '2018-04-25 07:36:28', 'อื่นๆ', 'ทดสอบ', 'Rejected'),
+('555', '2018-04-25 08:06:10', 'อื่น ๆ', 'ทำหน้า professor ดิ๊ ขี้เกียจแล้ว', 'Accepted'),
+('555', '2018-04-25 08:06:34', 'อื่น ๆ', 'ไม่อยากทำโปรเจคแล้วครับ ขอลาออกได้ไหมครับ', 'Rejected'),
+('555', '2018-04-28 15:15:52', 'ถอนรายวิชา', 'จะถอน com prog แฮร่', 'Rejected'),
+('5831001021', '2018-04-30 06:08:54', 'ขอใบรับรอง', 'ขอใบรับรองการเป็นนิสิต ภาษาอังกฤษ เพื่อนำไปยื่นขอวีซ่าประเทศออสเตรเลีย', 'Accepted');
 
 -- --------------------------------------------------------
 
@@ -4951,11 +4996,13 @@ INSERT INTO `request` (`student_id`, `request_time`, `form_name`, `details`, `st
 -- Table structure for table `room`
 --
 
-CREATE TABLE `room` (
+CREATE TABLE IF NOT EXISTS `room` (
   `room_no` varchar(10) NOT NULL,
   `building_id` char(4) NOT NULL,
   `room_type` varchar(20) DEFAULT NULL,
-  `seat_capacity` int(4) UNSIGNED DEFAULT NULL
+  `seat_capacity` int(4) unsigned DEFAULT NULL,
+  PRIMARY KEY (`room_no`,`building_id`),
+  KEY `room_fk` (`building_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -5860,7 +5907,7 @@ INSERT INTO `room` (`room_no`, `building_id`, `room_type`, `seat_capacity`) VALU
 -- Table structure for table `student`
 --
 
-CREATE TABLE `student` (
+CREATE TABLE IF NOT EXISTS `student` (
   `student_id` varchar(10) NOT NULL,
   `fname_th` varchar(50) NOT NULL,
   `lname_th` varchar(50) NOT NULL,
@@ -5871,13 +5918,18 @@ CREATE TABLE `student` (
   `address` varchar(100) DEFAULT NULL,
   `mobile_no` varchar(15) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
-  `entry_year` int(4) UNSIGNED DEFAULT NULL,
+  `entry_year` int(4) unsigned DEFAULT NULL,
   `graduated` tinyint(1) DEFAULT NULL,
-  `gpax` double UNSIGNED DEFAULT NULL,
-  `credit_gain` int(3) UNSIGNED DEFAULT NULL,
+  `gpax` double unsigned DEFAULT NULL,
+  `credit_gain` int(3) unsigned DEFAULT NULL,
   `curriculum` char(5) DEFAULT NULL,
   `department` char(4) DEFAULT NULL,
-  `advisor` varchar(30) DEFAULT NULL
+  `advisor` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`student_id`),
+  KEY `student_fk1` (`curriculum`),
+  KEY `student_fk2` (`department`),
+  KEY `student_fk3` (`advisor`),
+  KEY `graduated` (`graduated`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -5885,8 +5937,8 @@ CREATE TABLE `student` (
 --
 
 INSERT INTO `student` (`student_id`, `fname_th`, `lname_th`, `fname_en`, `lname_en`, `gender`, `date_of_birth`, `address`, `mobile_no`, `email`, `entry_year`, `graduated`, `gpax`, `credit_gain`, `curriculum`, `department`, `advisor`) VALUES
-('508888021', 'แปดปี', 'ก็ไม่จบ', 'eightyears', 'noend', 'M', '1990-01-12', 'ค่ายปรับทัศนคติ', '0801121112', 'taksin@dubai.com', 2007, 0, 2.5, 6, '21100', '2110', 'athasit.s'),
-('530101321', 'เรียนโคตรดี', 'เกรดสวยงาม', 'studysogood', 'gradeperfect', 'F', '1993-12-31', 'Earth', '0844444444', 'prayuth@thailand.com', 2010, 2, 4, 38, '21100', '2110', 'athasit.s'),
+('508888021', 'แปดปี', 'ก็ไม่จบ', 'eightyears', 'noend', 'M', '1990-01-12', 'ค่ายปรับทัศนคติ', '0801121112', 'taksin@dubai.com', 2007, 0, 2.5, 6, '21100', '2110', 'twittie.s'),
+('530101321', 'เรียนโคตรดี', 'เกรดสวยงาม', 'studysogood', 'gradeperfect', 'F', '1993-12-31', 'Earth', '0844444444', 'prayuth@thailand.com', 2010, 2, 4, 38, '21100', '2110', 'proadpran.p'),
 ('5304023830', 'เทนนิส', 'ไมโครมิเตอร์', 'tennis', 'micrometer', 'M', '1970-01-01', 'Chive Street 51 MD Madagascar', '0000000000', 'explicabo@Livefish.com', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
 ('5308088931', 'ยอช', 'ค็อกเทล', 'yacht', 'cocktail', 'M', '1970-01-01', 'Talmadge Parkway 50 MO Kuwait', '0000000000', 'wMcdonald@Topdrive.info', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
 ('5312101133', 'คอร์ด', 'เน็ตเวิร์ก', 'chord', 'network', 'F', '1970-01-01', 'Hollow Ridge Trail 94 NY Mozambique', '0000000000', 'tCrawford@Jaxbean.gov', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
@@ -6040,7 +6092,7 @@ INSERT INTO `student` (`student_id`, `fname_th`, `lname_th`, `fname_en`, `lname_
 ('5627189838', 'ออกเทน', 'ไฟเบอร์กลาสส์', 'octane', 'fiberglass', 'M', '1970-01-01', 'Fieldstone Circle 50 WA United Kingdom', '0000000000', 'sReyes@Wordtune.biz', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
 ('5627399938', 'แก๊สเฟรม', 'โพรไฟล์', 'gasframe', 'profile', 'F', '1970-01-01', 'Lerdahl Point 39 WI Poland', '0000000000', 'tElliott@Browsebug.info', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
 ('5627945236', 'แฟลต', 'เซกเมนต์', 'flat', 'segment', 'M', '1970-01-01', 'Ludington Drive 96 VT Eritrea', '0000000000', 'MarieWillis@Plajo.org', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
-('5627978136', 'ฮับพังก์', 'อัปโหลด', 'hubpunk', 'upload', 'F', '1970-01-01', 'Elmside Road 65 TX Cote d\'Ivoire', '0000000000', 'JimmyAdams@Skipstorm.edu', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
+('5627978136', 'ฮับพังก์', 'อัปโหลด', 'hubpunk', 'upload', 'F', '1970-01-01', 'Elmside Road 65 TX Cote d''Ivoire', '0000000000', 'JimmyAdams@Skipstorm.edu', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
 ('5627989836', 'คอรัส', 'กิโลเฮิร์ต', 'chorus', 'kilohertz', 'M', '1970-01-01', 'Summerview Place 13 FL Kiribati', '0000000000', '6Hill@Einti.mil', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
 ('5628645738', 'ฟอร์ม', 'แทรกเตอร์', 'form', 'tractor', 'F', '1970-01-01', 'Shelley Trail 59 MO Nicaragua', '0000000000', 'sit@Oyonder.mil', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
 ('5629099938', 'สไลด์', 'อินฟราเรด', 'slide', 'infrared', 'M', '1970-01-01', 'High Crossing Point 29 TX Philippines', '0000000000', '5Banks@Edgetag.info', 1999, 0, 0, 0, '21100', '2110', 'twittie.s'),
@@ -6105,12 +6157,14 @@ INSERT INTO `student` (`student_id`, `fname_th`, `lname_th`, `fname_en`, `lname_
 -- Table structure for table `teaching`
 --
 
-CREATE TABLE `teaching` (
+CREATE TABLE IF NOT EXISTS `teaching` (
   `professor_id` varchar(30) NOT NULL,
   `course_id` varchar(7) NOT NULL,
-  `course_year` int(4) UNSIGNED NOT NULL,
-  `course_semester` int(1) UNSIGNED NOT NULL,
-  `course_section` int(2) UNSIGNED NOT NULL
+  `course_year` int(4) unsigned NOT NULL,
+  `course_semester` int(1) unsigned NOT NULL,
+  `course_section` int(2) unsigned NOT NULL,
+  PRIMARY KEY (`professor_id`,`course_id`,`course_year`,`course_semester`,`course_section`),
+  KEY `teaching_fk2` (`course_id`,`course_year`,`course_semester`,`course_section`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -6118,183 +6172,20 @@ CREATE TABLE `teaching` (
 --
 
 INSERT INTO `teaching` (`professor_id`, `course_id`, `course_year`, `course_semester`, `course_section`) VALUES
-('athasit.s', '2109101', 2017, 2, 1),
-('athasit.s', '2109101', 2017, 2, 2),
+('jaidee.r', '2109101', 2017, 2, 1),
 ('athasit.s', '2110101', 2017, 2, 1),
 ('athasit.s', '2110101', 2017, 2, 2),
 ('athasit.s', '2110201', 2017, 2, 1),
-('chotirat.r', '2110422', 2017, 2, 1),
-('jaidee.r', '2109101', 2017, 2, 1),
-('kunwadee.s', '2110471', 2017, 2, 33),
-('nakornthip.s', '2110332', 2017, 2, 1),
-('pornsiri.mu', '2110332', 2017, 2, 2),
-('proadpran.p', '2110422', 2017, 2, 33),
-('taratip.s', '2110422', 2017, 2, 3),
-('twittie.s', '2110101', 2017, 2, 1),
-('twittie.s', '2110201', 2017, 2, 1),
 ('twittie.s', '2110318', 2017, 2, 1),
 ('twittie.s', '2110318', 2017, 2, 2),
+('nakornthip.s', '2110332', 2017, 2, 1),
+('pornsiri.mu', '2110332', 2017, 2, 2),
 ('twittie.s', '2110332', 2017, 2, 33),
-('wiwat.v', '2110422', 2017, 2, 2);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `account`
---
-ALTER TABLE `account`
-  ADD PRIMARY KEY (`username`);
-
---
--- Indexes for table `bill`
---
-ALTER TABLE `bill`
-  ADD PRIMARY KEY (`student_id`,`semester`,`academic_year`),
-  ADD KEY `academic_year` (`academic_year`),
-  ADD KEY `academic_year_2` (`academic_year`,`semester`,`payment_status`),
-  ADD KEY `payment_status` (`payment_status`);
-
---
--- Indexes for table `building`
---
-ALTER TABLE `building`
-  ADD PRIMARY KEY (`building_id`),
-  ADD KEY `building_fk` (`faculty`);
-
---
--- Indexes for table `class_arrangement`
---
-ALTER TABLE `class_arrangement`
-  ADD PRIMARY KEY (`course_id`,`course_year`,`course_semester`,`course_section`,`room_no`,`building_id`,`class_date`,`class_start_time`),
-  ADD KEY `class_arr_fk2` (`room_no`,`building_id`);
-
---
--- Indexes for table `course`
---
-ALTER TABLE `course`
-  ADD PRIMARY KEY (`course_id`);
-
---
--- Indexes for table `course_section`
---
-ALTER TABLE `course_section`
-  ADD PRIMARY KEY (`course_id`,`course_year`,`course_semester`,`course_section`);
-
---
--- Indexes for table `course_sem`
---
-ALTER TABLE `course_sem`
-  ADD PRIMARY KEY (`course_id`,`course_year`,`course_semester`),
-  ADD KEY `course_sem_fk2` (`leader`),
-  ADD KEY `course_sem_fk3` (`midterm_exam`),
-  ADD KEY `course_sem_fk4` (`final_exam`);
-
---
--- Indexes for table `curriculum`
---
-ALTER TABLE `curriculum`
-  ADD PRIMARY KEY (`curriculum_id`),
-  ADD KEY `cuuriculum_fk` (`faculty`);
-
---
--- Indexes for table `department`
---
-ALTER TABLE `department`
-  ADD PRIMARY KEY (`department_id`),
-  ADD KEY `department_fk` (`faculty`);
-
---
--- Indexes for table `enrollment`
---
-ALTER TABLE `enrollment`
-  ADD PRIMARY KEY (`student_id`,`course_id`,`course_year`,`course_semester`,`course_section`),
-  ADD KEY `enrollment_fk2` (`course_id`,`course_year`,`course_semester`,`course_section`);
-
---
--- Indexes for table `exam`
---
-ALTER TABLE `exam`
-  ADD PRIMARY KEY (`exam_name`);
-
---
--- Indexes for table `exam_arrangement`
---
-ALTER TABLE `exam_arrangement`
-  ADD PRIMARY KEY (`room_no`,`building_id`,`exam_name`,`exam_date`,`start_time`),
-  ADD KEY `exam_fk1` (`exam_name`);
-
---
--- Indexes for table `faculty`
---
-ALTER TABLE `faculty`
-  ADD PRIMARY KEY (`faculty_code`);
-
---
--- Indexes for table `lesson_plan`
---
-ALTER TABLE `lesson_plan`
-  ADD PRIMARY KEY (`curriculum_id`,`course_id`),
-  ADD KEY `lesson_plan_fk1` (`course_id`);
-
---
--- Indexes for table `news`
---
-ALTER TABLE `news`
-  ADD PRIMARY KEY (`course_id`,`course_year`,`course_semester`,`course_section`,`publish_time`);
-
---
--- Indexes for table `prerequisite`
---
-ALTER TABLE `prerequisite`
-  ADD PRIMARY KEY (`course`,`precourse`),
-  ADD KEY `prerequisite_fk2` (`precourse`);
-
---
--- Indexes for table `professor`
---
-ALTER TABLE `professor`
-  ADD PRIMARY KEY (`professor_id`),
-  ADD KEY `professor_fk` (`department`);
-
---
--- Indexes for table `record`
---
-ALTER TABLE `record`
-  ADD PRIMARY KEY (`student_id`,`course_id`,`course_year`,`course_semester`),
-  ADD KEY `record_fk2` (`course_id`,`course_year`,`course_semester`);
-
---
--- Indexes for table `request`
---
-ALTER TABLE `request`
-  ADD PRIMARY KEY (`student_id`,`request_time`),
-  ADD KEY `status` (`status`);
-
---
--- Indexes for table `room`
---
-ALTER TABLE `room`
-  ADD PRIMARY KEY (`room_no`,`building_id`),
-  ADD KEY `room_fk` (`building_id`);
-
---
--- Indexes for table `student`
---
-ALTER TABLE `student`
-  ADD PRIMARY KEY (`student_id`),
-  ADD KEY `student_fk1` (`curriculum`),
-  ADD KEY `student_fk2` (`department`),
-  ADD KEY `student_fk3` (`advisor`),
-  ADD KEY `graduated` (`graduated`);
-
---
--- Indexes for table `teaching`
---
-ALTER TABLE `teaching`
-  ADD PRIMARY KEY (`professor_id`,`course_id`,`course_year`,`course_semester`,`course_section`),
-  ADD KEY `teaching_fk2` (`course_id`,`course_year`,`course_semester`,`course_section`);
+('chotirat.r', '2110422', 2017, 2, 1),
+('wiwat.v', '2110422', 2017, 2, 2),
+('taratip.s', '2110422', 2017, 2, 3),
+('proadpran.p', '2110422', 2017, 2, 33),
+('kunwadee.s', '2110471', 2017, 2, 33);
 
 --
 -- Constraints for dumped tables
@@ -6304,122 +6195,121 @@ ALTER TABLE `teaching`
 -- Constraints for table `bill`
 --
 ALTER TABLE `bill`
-  ADD CONSTRAINT `bill_fk` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `bill_fk` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`);
 
 --
 -- Constraints for table `building`
 --
 ALTER TABLE `building`
-  ADD CONSTRAINT `building_fk` FOREIGN KEY (`faculty`) REFERENCES `faculty` (`faculty_code`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `building_fk` FOREIGN KEY (`faculty`) REFERENCES `faculty` (`faculty_code`);
 
 --
 -- Constraints for table `class_arrangement`
 --
 ALTER TABLE `class_arrangement`
-  ADD CONSTRAINT `class_arr_fk1` FOREIGN KEY (`course_id`,`course_year`,`course_semester`,`course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `class_arr_fk2` FOREIGN KEY (`room_no`,`building_id`) REFERENCES `room` (`room_no`, `building_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `class_arr_fk1` FOREIGN KEY (`course_id`, `course_year`, `course_semester`, `course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`),
+  ADD CONSTRAINT `class_arr_fk2` FOREIGN KEY (`room_no`, `building_id`) REFERENCES `room` (`room_no`, `building_id`);
 
 --
 -- Constraints for table `course_section`
 --
 ALTER TABLE `course_section`
-  ADD CONSTRAINT `course_section_fk1` FOREIGN KEY (`course_id`,`course_year`,`course_semester`) REFERENCES `course_sem` (`course_id`, `course_year`, `course_semester`);
+  ADD CONSTRAINT `course_section_fk1` FOREIGN KEY (`course_id`, `course_year`, `course_semester`) REFERENCES `course_sem` (`course_id`, `course_year`, `course_semester`);
 
 --
 -- Constraints for table `course_sem`
 --
 ALTER TABLE `course_sem`
-  ADD CONSTRAINT `course_sem_fk1` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `course_sem_fk2` FOREIGN KEY (`leader`) REFERENCES `professor` (`professor_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `course_sem_fk3` FOREIGN KEY (`midterm_exam`) REFERENCES `exam` (`exam_name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `course_sem_fk4` FOREIGN KEY (`final_exam`) REFERENCES `exam` (`exam_name`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `course_sem_fk1` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`),
+  ADD CONSTRAINT `course_sem_fk2` FOREIGN KEY (`leader`) REFERENCES `professor` (`professor_id`),
+  ADD CONSTRAINT `course_sem_fk3` FOREIGN KEY (`midterm_exam`) REFERENCES `exam` (`exam_name`),
+  ADD CONSTRAINT `course_sem_fk4` FOREIGN KEY (`final_exam`) REFERENCES `exam` (`exam_name`);
 
 --
 -- Constraints for table `curriculum`
 --
 ALTER TABLE `curriculum`
-  ADD CONSTRAINT `cuuriculum_fk` FOREIGN KEY (`faculty`) REFERENCES `faculty` (`faculty_code`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `cuuriculum_fk` FOREIGN KEY (`faculty`) REFERENCES `faculty` (`faculty_code`);
 
 --
 -- Constraints for table `department`
 --
 ALTER TABLE `department`
-  ADD CONSTRAINT `department_fk` FOREIGN KEY (`faculty`) REFERENCES `faculty` (`faculty_code`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `department_fk` FOREIGN KEY (`faculty`) REFERENCES `faculty` (`faculty_code`);
 
 --
 -- Constraints for table `enrollment`
 --
 ALTER TABLE `enrollment`
-  ADD CONSTRAINT `enrollment_fk1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `enrollment_fk2` FOREIGN KEY (`course_id`,`course_year`,`course_semester`,`course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `enrollment_fk1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`),
+  ADD CONSTRAINT `enrollment_fk2` FOREIGN KEY (`course_id`, `course_year`, `course_semester`, `course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`);
 
 --
 -- Constraints for table `exam_arrangement`
 --
 ALTER TABLE `exam_arrangement`
-  ADD CONSTRAINT `exam_fk1` FOREIGN KEY (`exam_name`) REFERENCES `exam` (`exam_name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `exam_fk2` FOREIGN KEY (`room_no`,`building_id`) REFERENCES `room` (`room_no`, `building_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `exam_fk1` FOREIGN KEY (`exam_name`) REFERENCES `exam` (`exam_name`),
+  ADD CONSTRAINT `exam_fk2` FOREIGN KEY (`room_no`, `building_id`) REFERENCES `room` (`room_no`, `building_id`);
 
 --
 -- Constraints for table `lesson_plan`
 --
 ALTER TABLE `lesson_plan`
-  ADD CONSTRAINT `lesson_plan_fk1` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `lesson_plan_fk2` FOREIGN KEY (`curriculum_id`) REFERENCES `curriculum` (`curriculum_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `lesson_plan_fk1` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`),
+  ADD CONSTRAINT `lesson_plan_fk2` FOREIGN KEY (`curriculum_id`) REFERENCES `curriculum` (`curriculum_id`);
 
 --
 -- Constraints for table `news`
 --
 ALTER TABLE `news`
-  ADD CONSTRAINT `news_fk` FOREIGN KEY (`course_id`,`course_year`,`course_semester`,`course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `news_fk` FOREIGN KEY (`course_id`, `course_year`, `course_semester`, `course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`);
 
 --
 -- Constraints for table `prerequisite`
 --
 ALTER TABLE `prerequisite`
-  ADD CONSTRAINT `prerequisite_fk1` FOREIGN KEY (`course`) REFERENCES `course` (`course_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `prerequisite_fk2` FOREIGN KEY (`precourse`) REFERENCES `course` (`course_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `prerequisite_fk1` FOREIGN KEY (`course`) REFERENCES `course` (`course_id`),
+  ADD CONSTRAINT `prerequisite_fk2` FOREIGN KEY (`precourse`) REFERENCES `course` (`course_id`);
 
 --
 -- Constraints for table `professor`
 --
 ALTER TABLE `professor`
-  ADD CONSTRAINT `professor_fk` FOREIGN KEY (`department`) REFERENCES `department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `professor_fk` FOREIGN KEY (`department`) REFERENCES `department` (`department_id`);
 
 --
 -- Constraints for table `record`
 --
 ALTER TABLE `record`
-  ADD CONSTRAINT `record_fk1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `record_fk2` FOREIGN KEY (`course_id`,`course_year`,`course_semester`) REFERENCES `course_sem` (`course_id`, `course_year`, `course_semester`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `record_fk1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`),
+  ADD CONSTRAINT `record_fk2` FOREIGN KEY (`course_id`, `course_year`, `course_semester`) REFERENCES `course_sem` (`course_id`, `course_year`, `course_semester`);
 
 --
 -- Constraints for table `request`
 --
 ALTER TABLE `request`
-  ADD CONSTRAINT `request_fk` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `request_fk` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`);
 
 --
 -- Constraints for table `room`
 --
 ALTER TABLE `room`
-  ADD CONSTRAINT `room_fk` FOREIGN KEY (`building_id`) REFERENCES `building` (`building_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `room_fk` FOREIGN KEY (`building_id`) REFERENCES `building` (`building_id`);
 
 --
 -- Constraints for table `student`
 --
 ALTER TABLE `student`
-  ADD CONSTRAINT `student_fk1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`curriculum_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `student_fk2` FOREIGN KEY (`department`) REFERENCES `department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `student_fk3` FOREIGN KEY (`advisor`) REFERENCES `professor` (`professor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `student_fk1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`curriculum_id`),
+  ADD CONSTRAINT `student_fk2` FOREIGN KEY (`department`) REFERENCES `department` (`department_id`),
+  ADD CONSTRAINT `student_fk3` FOREIGN KEY (`advisor`) REFERENCES `professor` (`professor_id`);
 
 --
 -- Constraints for table `teaching`
 --
 ALTER TABLE `teaching`
-  ADD CONSTRAINT `teaching_fk1` FOREIGN KEY (`professor_id`) REFERENCES `professor` (`professor_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `teaching_fk2` FOREIGN KEY (`course_id`,`course_year`,`course_semester`,`course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
+  ADD CONSTRAINT `teaching_fk1` FOREIGN KEY (`professor_id`) REFERENCES `professor` (`professor_id`),
+  ADD CONSTRAINT `teaching_fk2` FOREIGN KEY (`course_id`, `course_year`, `course_semester`, `course_section`) REFERENCES `course_section` (`course_id`, `course_year`, `course_semester`, `course_section`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

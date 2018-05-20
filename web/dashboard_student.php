@@ -41,7 +41,7 @@ require_once('header.php');
     <div class="col-md-4 my-2">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">My course</h5>
+          <h5 class="card-title">My course <span id="newNews"></span></h5>
           <p class="card-text">View your courses and information about them including timetable and news.</p>
           <a href="student_mycourse.php" class="btn btn-primary">Go</a>
         </div>
@@ -59,7 +59,7 @@ require_once('header.php');
     <div class="col-md-4 my-2">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Request</h5>
+          <h5 class="card-title">Request <span id="newRequest"></span></h5>
           <p class="card-text">View your submitted requests status and submit a new request.</p>
           <a href="student_request.php" class="btn btn-primary">Go</a>
         </div>
@@ -91,6 +91,25 @@ require_once('header.php');
     }
   }
   checkAlert();
+
+  async function checkNewRequest() {
+    let hasNewRequest = await queryParsed('check_new_request',username);
+    if(hasNewRequest[0].result == 'yes') {
+      $("#newRequest").html('<span class="badge badge-danger">New</span>');
+    }
+  }
+
+  checkNewRequest();
+  
+  async function checkNewNews() {
+    let hasNewNews = await queryParsed('check_new_news',username);
+    if(hasNewNews[0].result == 'yes') {
+      $("#newNews").html('<span class="badge badge-danger">New</span>');
+    }
+  }
+
+  checkNewNews();
+
 </script>
 
 <?php

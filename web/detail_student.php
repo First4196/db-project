@@ -1,34 +1,26 @@
 <?php
 require_once('common.php');
-$title="Personal Infomation";
+$title="Details of ".$_GET["sid"];
 require_once('header.php');
 ?>
 <div class="container">
   <br>
   <h1 class="text-center">
-    Personal Infomation
+    Details of <?php echo $_GET["sid"]; ?>
   </h1>
   <hr>
   <br>
   <div id="infoResult">
     Loading ...
   </div>
-  <hr>
-  <h2>
-    Bill status
-  </h2>
-  <section id="billResult">
-    Loading ...
-  </section>
   <br>
 </div>
 
 <script>
-  let username = <?php echo $_SESSION["account_username"]; ?>
-  
+  let sid = '<?php echo $_GET["sid"];?>';
   async function loadInfo() {
-    let student_info_data = JSON.parse(await queryPromise('get_student_info',username))
-    let lesson_plan_data = JSON.parse(await queryPromise('get_lesson_plan_of_student',username));
+    let student_info_data = JSON.parse(await queryPromise('get_student_info',sid))
+    let lesson_plan_data = JSON.parse(await queryPromise('get_lesson_plan_of_student',sid));
     $("#infoResult").html(ejs.render(`
 <div class="row">
   <div class="col-md-3">
@@ -58,7 +50,7 @@ require_once('header.php');
           <b>Credit Gain:</b> <%= student_info.credit_gain %><br>
           <b>GPAX:</b> <%= parseFloat(student_info.gpax).toFixed(2) %><br>
         </p>
-        <a href="student_grade.php" class="btn btn-primary">More Grade Details</a>
+        <a href="detail_student_grade.php?sid=<%= student_info.student_id %>" class="btn btn-primary">More Grade Details</a>
       </div>
     </div>
     <div class="card mt-3">
@@ -78,18 +70,6 @@ require_once('header.php');
       <div class="card-body">
         <h5 class="card-title">Graduation</h5>
         <p class="card-text">Status: <%= ['No','Pending','Graduated'][parseInt(student_info.graduated)] %></p>
-        <% if(student_info.graduated==='0'){ %>
-          <% if(lesson_plan.every(c=>c.pass==="1")){ %>
-            <button class="btn btn-primary" onclick="requestGrad()">Request to graduate</button>
-          <% }else{ %>
-            <button class="btn btn-primary disabled" disabled>Request to graduate</button>
-          <% } %>
-        <% }else if(student_info.graduated==='1'){ %>
-          <button class="btn btn-primary disabled" disabled>Requested</button>
-        <% }else{ %>
-          <strong>Congraduations!</strong>
-        <%} %>
-        <br><br>
         View required courses <button type="button" class="btn btn-light" data-toggle="collapse" data-target="#collapseExample"><span class="oi oi-chevron-bottom"></span></button>
         <div class="collapse" id="collapseExample">
           <table class="table" >
@@ -123,45 +103,6 @@ require_once('header.php');
     
   }
   loadInfo();
-  
-  async function requestGrad(){
-    let data = JSON.parse(await queryPromise('graduatedplusplus',username))
-    if(data=="true"){
-      location.reload()
-    }
-  }
-  
-  (async function(){
-    let data = JSON.parse(await queryPromise('get_bill_of_student',username))
-    
-    $("#billResult").html(ejs.render(`
-<table class="table">
-  <thead>
-    <tr>
-      <th>Year/Semester</th>
-      <th>Amount</th>
-      <th>Status</th>
-      <th>Print</th>
-    </tr>
-  </thead>
-  <% data.forEach(b => { %>
-    <tr>
-      <td><%=b.academic_year %> / <%=b.semester %></td>
-      <td class="<%=(b.payment_status=='Late1'||b.payment_status=='Late2')?'text-danger':''%>">
-        <%=b.amount %> <%={'Paid':'','Unpaid':'','Late1':'+200','Late2':'+400'}[b.payment_status]%>
-      </td>
-      <td><%=b.payment_status %></td>
-      <td>
-        <a href="student_bill.php?sid=<%= sid %>&year=<%= b.academic_year%>/<%= b.semester%>&amount=<%=b.amount%>&status=<%=b.payment_status%>">
-          <img src="https://cdn1.iconfinder.com/data/icons/universal-shop-icons/256/Print.png" style="width:30px; height:30px;">
-        </a>
-      </td>
-    </tr>
-  <% }) %>
-</table>
-`,{data:data, sid : username}))
-  })()
-  
   
 </script>
 

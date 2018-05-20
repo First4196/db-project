@@ -8,7 +8,8 @@ require_once('header.php');
   <h1>
     Account List
   </h1>
-  <button type="button" class="btn btn-primary" onclick="loadAccountList();">Refresh</button>
+  <br>
+  <a href="staff_account_add.php" class="btn btn-primary">Add New Account</a>
   <br>
   <br>
   <table id="account_list_div" class="table">
@@ -24,6 +25,7 @@ require_once('header.php');
       .append($("<th>").html("Username"))
       .append($("<th>").html("Password"))
       .append($("<th>").html("Type"))
+      .append($("<th>").html("Edit"))
       .append($("<th>").html("Delete"))
     );
     
@@ -31,25 +33,40 @@ require_once('header.php');
       data = JSON.parse(data);
       for(let i in data) {
         let row = data[i];
+        let usernameHTML = row["username"];
+        if(row["type"]=='student'){
+          usernameHTML = '<a href="detail_student.php?sid='+row["username"]+'">'+row["username"]+'</a>';
+        }
+        if(row["type"]=='professor'){
+          usernameHTML = '<a href="detail_professor.php?pid='+row["username"]+'">'+row["username"]+'</a>';
+        }
         $("#account_list_div").append(
           $("<tr>")
-          .append($("<td>").html(row["username"]))
+          .append($("<td>").html(usernameHTML))
           .append($("<td>").html(row["password"]))
           .append($("<td>").html(row["type"]))
+          .append($("<td>").append($("<button>",{class:"btn btn-warning"}).click(() => editAccount(row['username'])).html("Edit")))
           .append($("<td>").append($("<button>",{class:"btn btn-danger"}).click(() => deleteAccount(row['username'])).html("Delete")))
         )
       }
     });
   }
   loadAccountList();
-  
-  function deleteAccount(i) {
-    console.log("DEL",i);
-    $.post('do.php',makeQuery('remove_one_account',i),data=>{
-      data = JSON.parse(data)
-      loadAccountList()
-    })
+
+  function editAccount(username) {
+    window.location.replace('staff_account_edit.php?username='+username);
   }
+
+  function deleteAccount(username) {
+    if(confirm('Delete account '+username)) {
+      console.log("DEL",username);
+      $.post('do.php',makeQuery('remove_one_account',username),data=>{
+        data = JSON.parse(data)
+        loadAccountList()
+      })
+    }
+  }
+
 </script>
 
 <?php

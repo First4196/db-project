@@ -37,7 +37,7 @@ require_once('header.php');
   </thead>
   <% data.forEach(student => { %> 
   <tr>
-    <td><%= student.student_id %></td>
+    <td><a href="detail_student.php?sid=<%= student.student_id %>"><%= student.student_id %></a></td>
     <td><%= student.fname_en %> <%= student.lname_en %></td>
     <td><%= student.fname_th %> <%= student.lname_th %></td>
   </tr>

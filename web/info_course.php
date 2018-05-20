@@ -37,7 +37,7 @@ require_once('header.php');
         <%= course[0].course_abbrev %>
         <span class="badge badge-primary"><%= cid %></span>
       </h4>
-      <p><b>Leader:</b> <%= course[0].leader %><br>
+      <p><b>Leader:</b> <a href="detail_professor.php?pid=<%= course[0].leader %>"><%= course[0].leader %></a><br>
       <b>Credit:</b> <%= course[0].credit %><br>
       <% if(course[0].midterm_exam !== null) {%><b>Midterm</b>: 
         <% filterDuplicate(course,['midterm_date','midterm_start','midterm_finish']).forEach(examTime => {%>
@@ -62,7 +62,16 @@ require_once('header.php');
           </div>
         </div>
         <p> 
-          <b>Teacher: </b> <%= secInfo.teachingProf %>
+          <b>Teacher: </b>
+          <% if(secInfo.teachingProf){ %>
+            <% var teachers = secInfo.teachingProf.split(", "); %>
+            <% for(var i=0;i<teachers.length;i++){ %>
+              <% if(i>0){ %>
+                , 
+              <% } %>
+              <a href="detail_professor.php?pid=<%= teachers[i] %>"><%= teachers[i] %></a>
+            <% } %>
+          <% } %>
         </p>
         <table class="table">
           <% filterDuplicate(secs.filter(clas => clas.class_date !== null),['room_no','building_id','class_date','class_start_time']).forEach(clas => { %>

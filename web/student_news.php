@@ -19,10 +19,11 @@ require_once('header.php');
       
   let course_id = <?php echo $_GET['course_id'] ?>
   
+  let current_semester = getCurrentSemester();
+
   async function getNews() {
     // get registered course
-    let current_semester = getCurrentSemester();
-    let data = JSON.parse(await queryPromise('get_news_of_course_of_student',course_id,current_semester.course_year,current_semester.course_semester ,username ));
+    let data = JSON.parse(await queryPromise('get_news_of_course_of_student',course_id,current_semester.course_year, current_semester.course_semester ,username ));
     console.log(data);
 
     let resultHTML = ejs.render(`
@@ -44,6 +45,7 @@ require_once('header.php');
     $('#newsResult').html(resultHTML)
   }
   getNews()
+  queryPromise('set_last_news_visit',username, course_id, current_semester.course_year, current_semester.course_semester);
 </script>
 <?php
 require_once('footer.php');

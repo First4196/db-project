@@ -1,6 +1,6 @@
 <?php
 require_once('common.php');
-$title="Grade";
+$title="Grade of ".$_GET["sid"];
 require_once('header.php');
 ?>
 <style>
@@ -26,97 +26,20 @@ require_once('header.php');
 <div class="container d-print-none">
   <br>
   <h1>
-    Grade Report
+    Grade of <?php echo $_GET["sid"]; ?>
   </h1>
-  <br>
-  <button class="btn btn-primary btn-lg" onclick="print()">
-    <span class="oi oi-print"></span> Print Transcript
-  </button>
-  <br>
   <br>
   <div id="grade_div">
     
   </div>
 </div>
-<div id="transcript" class="d-none d-print-block">
-  <p class="display-1">
-    Hello world
-  </p>
-</div>
+
 <script>
-  let username = '<?php echo $_SESSION['account_username']; ?>';
-  
-  async function loadPrint(grade){
-    let student = JSON.parse(await queryPromise('get_student_info',username))[0]
-//     throw new Error('Not Implemented')
-    $('#transcript').html(ejs.render(`<div id="gg" class="text-uppercase">
-  <div class="row my-3">
-    <div class="col-3 text-center">
-      <img width="64px" height="64px" src="img/logo.png"><b>
-      <br>chulalongkorn<br>university<br>bangkok 10330<br>thailand</b>
-    </div>
-    <div class="col-9 mt-1">
-      <div class="row no-gutters">
-        <div class="col-8">
-          <b>Name</b> <%= student.fname_en+' '+student.lname_en %>
-        </div>
-        <div class="col-4">
-          <b>Sex</b> <%= student.gender %>
-        </div>
-        <div class="col-12">
-          <b>student</b> id <%= student.student_id %>
-        </div>
-        <div class="col-12">
-          <b>BirthDate</b> <%= student.date_of_birth %>
-        </div>
-        <div class="col-6">
-          <b>Admission</b> <%= student.entry_year %>
-        </div>
-        <div class="col-6">
-          <b>Graduation</b> <%= new Date().getFullYear() %>
-        </div>
-        <div class="col-12">
-          <b>Faculty</b> <%= student.faculty %>
-        </div>
-        <div class="col-12">
-          <b>Department</b> <%= student.department %>
-        </div>
-        <div class="col-12">
-          <b>program</b> <%= student.curriculum %>
-        </div>
-      </div>
-    </div>
-  </div>
-  <span></span>
-  <div id="ez" class="d-flex flex-column flex-wrap align-content-start h-100">
-<% for(let yearString of Object.keys(grade).sort()){ %>    
-    <div>
-      <h5><%= yearString %></h5>
-      <table class="table table-sm">
-        <thead>
-          <th>ID</th>
-          <th>Course Abbrev</th>
-          <th>Grade</th>
-          <th>Credit</th>
-        </thead>
-        <% for(let row of grade[yearString]){ %>
-        <tr>
-          <td><%= row["course_id"] %></td>
-          <td><%= row["course_abbrev"] %></td>
-          <td><%= row["grade"] %></td>
-          <td><%= row["credit"] %></td>
-        </tr>
-        <% } %>
-      </table>
-    </div>
-<% } %>
-  </div>
-</div>`,{student,grade}))
-  }
+  let sid = '<?php echo $_GET["sid"];?>';
   
   async function loadGrade() {
     $("#grade_div").empty();
-    let data = await queryParsed('get_grade_of_student',username);
+    let data = await queryParsed('get_grade_of_student',sid);
     //$.post("do.php",makeQuery('get_grade_of_student',username),(data) => {
       //data = JSON.parse(data);
       // build grade data by grouping courses with year/semester
@@ -126,8 +49,6 @@ require_once('header.php');
         if(grade[yearString] === undefined) grade[yearString] = [];
         grade[yearString].push(row);
       }
-      
-      await loadPrint(grade)
       
       // for each year/sem, build grade report
       let gradeTotal = 0;

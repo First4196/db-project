@@ -88,6 +88,9 @@ $("#requestList").html(ejs.render(`
   }
   
   getMyRequest();
+
+  queryPromise('set_last_request_visit',username);
+
 </script>
 <?php
 require_once('footer.php');

@@ -137,7 +137,8 @@ require_once('header.php');
     let data = JSON.parse(await queryPromise('get_course_of_student_with_time',username, current_semester.course_year, current_semester.course_semester ));
     console.log(data);
     let subject = groupBy(data,'course_id');
-
+    console.log('subject');
+    console.log(subject);
     let resultHTML = ejs.render(`
 <% forEachIn(subject, (course_id, sub) => { %>
 <div class="p-2 col-md-4">
@@ -150,14 +151,26 @@ require_once('header.php');
       </h4>
       <p class="card-text">Section <%= sub[0].course_section %></p>
       
-      <b>Leader:</b> <%= sub[0].leader %><br>
+      <b>Leader:</b> <a href="detail_professor.php?pid=<%= sub[0].leader %>"><%= sub[0].leader %></a><br>
       <b>Credit:</b> <%= sub[0].credit %><br>
 
       <p> 
-        <b>Teacher: </b> <%= sub[0].teachingProf %>
+        <b>Teacher: </b>
+        <% if(sub[0].teachingProf){ %>
+          <% var teachers = sub[0].teachingProf.split(", "); %>
+          <% for(var i=0;i<teachers.length;i++){ %>
+            <% if(i>0){ %>
+              , 
+            <% } %>
+            <a href="detail_professor.php?pid=<%= teachers[i] %>"><%= teachers[i] %></a>
+          <% } %>
+        <% } %>
       </p>
 
       <a href="student_news.php?course_id=<%= sub[0].course_id %>" class="card-link">View news</a>
+      <% if(sub[0].hasNewNews == 'yes'){ %>
+        <span class="badge badge-danger">New</span>
+      <% } %>
     </div>
     <ul class="list-group list-group-flush">
       <% sub.forEach( (interval) => { %> 
