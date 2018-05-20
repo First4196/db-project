@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 20, 2018 at 07:58 AM
+-- Generation Time: May 20, 2018 at 08:05 PM
 -- Server version: 10.1.32-MariaDB
 -- PHP Version: 7.2.5
 
@@ -643,7 +643,7 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`username`, `password`, `type`, `last_request_visit`) VALUES
-('508888021', 'asdf1234', 'student', '2018-05-18 14:08:12'),
+('508888021', 'asdf1234', 'student', '2018-05-21 00:19:23'),
 ('530101321', 'asdf1234', 'student', '2018-05-16 17:27:12'),
 ('5304023830', 'asdf1234', 'student', '2018-05-19 12:44:08'),
 ('551555221', 'asdf1234', 'student', '2018-05-16 17:27:12'),
@@ -4114,7 +4114,7 @@ CREATE TABLE `enrollment` (
 
 INSERT INTO `enrollment` (`student_id`, `course_id`, `course_year`, `course_semester`, `course_section`, `last_news_visit`) VALUES
 ('508888021', '2109101', 2017, 2, 2, '2018-05-19 18:59:54'),
-('508888021', '2110201', 2017, 2, 1, '2018-05-18 17:59:21'),
+('508888021', '2110201', 2017, 2, 1, '2018-05-21 00:19:44'),
 ('530101321', '2109101', 2017, 2, 3, '0000-00-00 00:00:00');
 
 --
@@ -4394,6 +4394,7 @@ INSERT INTO `news` (`course_id`, `course_year`, `course_semester`, `course_secti
 ('2110201', 2017, 2, 1, '2018-04-30 07:39:25', 'Final report Linear Algebra', 'ให้นิสิตเขียนรายงาน หัวข้อ Real-world Application of Linear Algebra ส่งใน mycourseville ก่อนเที่ยงคืนวันที่ 10/05/2018'),
 ('2110201', 2017, 2, 1, '2018-05-01 02:03:12', 'test', 'test'),
 ('2110201', 2017, 2, 1, '2018-05-18 10:58:23', 'HW1', ''),
+('2110201', 2017, 2, 1, '2018-05-20 17:20:48', 'Final exam preparation', 'ไปอ่านดิ'),
 ('2110471', 2017, 2, 33, '2018-03-04 08:28:02', 'Netacad chapter exam', 'ให้นิสิตทำ exam chapter 1 ถึง 10 บน cisco netacad ก่อนเที่ยงคืนวันที่ 30/04/2018'),
 ('2110471', 2017, 2, 33, '2018-03-22 07:28:02', 'การบ้าน packet tracer ครั้งที่ 1', 'ให้นิสิตทำตาม assignment 1 และตอบคำถามบน mycourseville ก่อนเที่ยงคืนวันที่ 29/03/2018'),
 ('2110471', 2017, 2, 33, '2018-04-20 07:28:02', 'Post-test lab 9 & Pre-test lab 10', 'ให้นิสิตทำ Post-test lab 9 และ Pre-test lab 10 ใน mycourseville ก่อนเที่ยงคืนวันที่ 27/04/2018'),
@@ -4929,6 +4930,7 @@ CREATE TABLE `request` (
 
 INSERT INTO `request` (`student_id`, `request_time`, `form_name`, `details`, `status`, `response_time`) VALUES
 ('508888021', '2018-05-16 11:15:18', 'ถอนรายวิชา', 'ถอนดิ', 'Accepted', '0000-00-00 00:00:00'),
+('508888021', '2018-05-20 17:19:33', 'ลงเต็มที่นั่ง', 'ช่วยด้วย', 'Accepted', '2018-05-21 00:21:12'),
 ('530101321', '2018-04-24 05:03:36', 'ถอนรายวิชา', 'ถอนถอนถอน', 'Accepted', '0000-00-00 00:00:00'),
 ('530101321', '2018-04-24 05:50:08', 'ถอนรายวิชา', 'a', 'Accepted', '0000-00-00 00:00:00'),
 ('530101321', '2018-04-24 05:50:13', 'ลงเกินหน่วยกิต', 'asdf', 'Rejected', '0000-00-00 00:00:00'),
